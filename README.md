@@ -29,6 +29,9 @@ Un **crew** es un equipo de agentes de IA especializados que trabajan juntos par
 - ✅ **Análisis de Métricas**: Optimización basada en datos
 - ✅ **Campañas Multicanal**: Coordinación entre todos los canales
 - ✅ **Automatización Diaria**: Ejecuta tareas automáticamente
+- 🆕 **Chat Conversacional**: Controla todo con lenguaje natural
+- 🆕 **Bot de Telegram**: Usa el agente desde tu celular
+- 🆕 **Bot de WhatsApp**: Conecta vía WhatsApp Business
 
 ## 🛠️ Tecnologías
 
@@ -38,6 +41,8 @@ Un **crew** es un equipo de agentes de IA especializados que trabajan juntos par
 - **LangChain** - Orquestación de LLMs
 - **Meta Graph API** - Instagram/Facebook
 - **SendGrid** - Email marketing
+- **Telegram Bot API** - Bot de Telegram
+- **Twilio** - WhatsApp Business API
 - **Schedule** - Automatización de tareas
 
 ## 🚀 Inicio Rápido
@@ -66,15 +71,15 @@ nano .env
 
 **📖 Ver guía completa:** [CONFIGURACION.md](CONFIGURACION.md)
 
-### 3. Ejecutar
+### 3. Modos de Uso
 
-**💬 MODO CHAT (RECOMENDADO) - ¡Háblale naturalmente!**
+#### 💬 MODO CHAT (Terminal)
 
 ```bash
 python chat.py
 ```
 
-Ejemplos:
+Háblale naturalmente:
 ```
 💬 "crea un post de instagram sobre ayahuasca"
 💬 "necesito una campaña completa para enero"  
@@ -82,7 +87,30 @@ Ejemplos:
 💬 "envía un email promocional"
 ```
 
-**O usa el modo tradicional:**
+#### 📱 BOT DE TELEGRAM (Recomendado para celular)
+
+```bash
+# 1. Configura tu bot con @BotFather
+# 2. Agrega TELEGRAM_BOT_TOKEN a .env
+# 3. Ejecuta:
+python telegram_bot.py
+```
+
+**📖 Guía completa:** [BOTS_GUIA.md](BOTS_GUIA.md)
+
+#### 💚 BOT DE WHATSAPP (Empresarial)
+
+```bash
+# 1. Crea cuenta en Twilio
+# 2. Configura WhatsApp Business API
+# 3. Agrega credenciales a .env
+# 4. Ejecuta:
+python whatsapp_bot.py
+```
+
+**📖 Guía completa:** [BOTS_GUIA.md](BOTS_GUIA.md)
+
+#### 🖥️ MODO TRADICIONAL (CLI)
 
 ```bash
 # Modo interactivo con menú
@@ -221,15 +249,26 @@ sacred-rebirth-ai-agent/
 
 Ver `python main.py --help` para más opciones.
 
+## 📱 Opciones de Interfaz
+
+| Modo | Dificultad | Uso Recomendado | Setup |
+|------|-----------|-----------------|-------|
+| **Telegram Bot** | ⭐ Fácil | Personal/Equipo, desde celular | 5 min |
+| **Chat Terminal** | ⭐⭐ Media | Desarrollo, testing local | 1 min |
+| **WhatsApp Bot** | ⭐⭐⭐ Avanzada | Producción, clientes reales | 30 min |
+| **CLI Tradicional** | ⭐⭐ Media | Automatización, scripts | 1 min |
+
+**🎯 Recomendación:** Empieza con **Telegram Bot** para usar el agente desde tu celular fácilmente.
+
 ## 🔧 Herramientas del Crew
 
 Cada agente tiene acceso a herramientas especializadas:
 
-- **ContentGeneratorTool** - Genera contenido optimizado por plataforma
-- **SocialMediaPublishTool** - Publica en Instagram/Facebook
-- **EmailCampaignTool** - Envía campañas de email
-- **ContentCalendarTool** - Gestiona calendario de contenido
-- **LeadsManagerTool** - Administra leads y segmentación
+- **content_generator_tool** - Genera contenido optimizado por plataforma
+- **social_media_publish_tool** - Publica en Instagram/Facebook
+- **email_campaign_tool** - Envía campañas de email
+- **content_calendar_tool** - Gestiona calendario de contenido
+- **leads_manager_tool** - Administra leads y segmentación
 
 ## 📊 Flujo de Trabajo Típico
 
@@ -251,24 +290,26 @@ Cada agente tiene acceso a herramientas especializadas:
 
 ## 🌟 Casos de Uso
 
-### 1. Lanzamiento de Retiro
+### 1. Desde Telegram (Más Fácil)
+```
+💬 "Crea una campaña completa para el retiro de enero"
+💬 "Genera 5 posts para esta semana"
+💬 "Envía email de seguimiento a leads interesados"
+```
+
+### 2. Lanzamiento de Retiro (CLI)
 ```bash
 python main.py --mode campaign --goal "Retiro Enero 2026"
 ```
 
-### 2. Contenido Diario Automatizado
+### 3. Contenido Diario Automatizado
 ```bash
 python main.py --mode daily
 ```
 
-### 3. Nutrición de Leads
+### 4. Nutrición de Leads
 ```bash
 python main.py --mode leads --action nurture --segment interested
-```
-
-### 4. Análisis Semanal
-```bash
-python main.py --mode analytics --metric all
 ```
 
 ## 🤝 Contribuir

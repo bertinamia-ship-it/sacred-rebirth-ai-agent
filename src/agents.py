@@ -4,11 +4,11 @@ Definición de agentes especializados para el crew de marketing
 from crewai import Agent
 from config.settings import OPENAI_MODEL, BUSINESS_INFO
 from src.tools import (
-    ContentGeneratorTool,
-    SocialMediaPublishTool,
-    EmailCampaignTool,
-    ContentCalendarTool,
-    LeadsManagerTool
+    content_generator_tool,
+    social_media_publish_tool,
+    email_campaign_tool,
+    content_calendar_tool,
+    leads_manager_tool
 )
 
 
@@ -26,7 +26,7 @@ def create_content_strategist():
         espiritual, manteniendo un tono profesional y respetuoso hacia las medicinas sagradas.""",
         verbose=True,
         allow_delegation=True,
-        tools=[ContentCalendarTool()],
+        tools=[content_calendar_tool],
         llm=OPENAI_MODEL
     )
 
@@ -45,7 +45,7 @@ def create_content_creator():
         Tu contenido es inspirador, educativo y genera confianza.""",
         verbose=True,
         allow_delegation=False,
-        tools=[ContentGeneratorTool(), ContentCalendarTool()],
+        tools=[content_generator_tool, content_calendar_tool],
         llm=OPENAI_MODEL
     )
 
@@ -64,7 +64,7 @@ def create_social_media_manager():
         comprometida y auténtica.""",
         verbose=True,
         allow_delegation=False,
-        tools=[SocialMediaPublishTool(), ContentCalendarTool()],
+        tools=[social_media_publish_tool, content_calendar_tool],
         llm=OPENAI_MODEL
     )
 
@@ -83,7 +83,7 @@ def create_email_marketing_specialist():
         es personal, cálido y profesional.""",
         verbose=True,
         allow_delegation=False,
-        tools=[EmailCampaignTool(), LeadsManagerTool()],
+        tools=[email_campaign_tool, leads_manager_tool],
         llm=OPENAI_MODEL
     )
 
@@ -102,7 +102,7 @@ def create_analytics_optimizer():
         audiencia. Tus recomendaciones son accionables y basadas en datos.""",
         verbose=True,
         allow_delegation=True,
-        tools=[ContentCalendarTool(), LeadsManagerTool()],
+        tools=[content_calendar_tool, leads_manager_tool],
         llm=OPENAI_MODEL
     )
 
@@ -121,7 +121,7 @@ def create_customer_success_agent():
         preparación, y haces seguimiento personalizado. Eres empático, paciente y profesional.""",
         verbose=True,
         allow_delegation=False,
-        tools=[LeadsManagerTool(), EmailCampaignTool()],
+        tools=[leads_manager_tool, email_campaign_tool],
         llm=OPENAI_MODEL
     )
 

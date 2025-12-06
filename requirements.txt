@@ -12,3 +12,10 @@ crewai>=0.28.0
 crewai-tools>=0.2.0
 langchain>=0.1.0
 langchain-openai>=0.0.5
+
+# Telegram Bot
+python-telegram-bot>=20.0
+
+# WhatsApp Bot (via Twilio)
+flask>=3.0.0
+twilio>=8.0.0
