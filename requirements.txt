@@ -13,8 +13,8 @@ crewai-tools>=0.2.0
 langchain>=0.1.0
 langchain-openai>=0.0.5
 
-# Telegram Bot
-python-telegram-bot>=20.0
+# Telegram Bot (con todas las dependencias)
+python-telegram-bot[all]>=21.0
 
 # WhatsApp Bot (via Twilio)
 flask>=3.0.0
