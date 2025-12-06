@@ -53,11 +53,44 @@ cd sacred-rebirth-ai-agent
 pip install -r requirements.txt
 ```
 
-### 2. Configuración
+### 2. Configuración OBLIGATORIA
 
 ```bash
 # Copiar archivo de configuración
 cp .env.example .env
+
+# Editar y agregar tu OpenAI API Key (OBLIGATORIO)
+nano .env
+# Cambiar: OPENAI_API_KEY=sk-TU-KEY-AQUI
+```
+
+**📖 Ver guía completa:** [CONFIGURACION.md](CONFIGURACION.md)
+
+### 3. Ejecutar
+
+**💬 MODO CHAT (RECOMENDADO) - ¡Háblale naturalmente!**
+
+```bash
+python chat.py
+```
+
+Ejemplos:
+```
+💬 "crea un post de instagram sobre ayahuasca"
+💬 "necesito una campaña completa para enero"  
+💬 "muéstrame los leads"
+💬 "envía un email promocional"
+```
+
+**O usa el modo tradicional:**
+
+```bash
+# Modo interactivo con menú
+python main.py
+
+# Modo comando directo
+python main.py --mode social --platform instagram --topic "Ayahuasca"
+```
 
 # Editar con tus credenciales
 nano .env
