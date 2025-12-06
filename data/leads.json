@@ -1,1 +1,35 @@
-[]
+[
+  {
+    "id": 1,
+    "name": "María González",
+    "email": "maria.gonzalez@example.com",
+    "phone": "+52 555 123 4567",
+    "status": "interested",
+    "source": "instagram",
+    "interests": ["ayahuasca", "retiro espiritual"],
+    "notes": "Preguntó sobre el retiro de Enero",
+    "created_at": "2025-12-01T10:30:00"
+  },
+  {
+    "id": 2,
+    "name": "Juan Pérez",
+    "email": "juan.perez@example.com",
+    "phone": "+52 555 987 6543",
+    "status": "contacted",
+    "source": "facebook",
+    "interests": ["kambo", "qigong"],
+    "notes": "Solicitó información sobre precios",
+    "created_at": "2025-12-03T14:15:00"
+  },
+  {
+    "id": 3,
+    "name": "Ana Rodríguez",
+    "email": "ana.rodriguez@example.com",
+    "phone": "+52 555 456 7890",
+    "status": "interested",
+    "source": "website",
+    "interests": ["retiro espiritual", "ayahuasca"],
+    "notes": "Primera vez con medicina sagrada",
+    "created_at": "2025-12-05T09:00:00"
+  }
+]

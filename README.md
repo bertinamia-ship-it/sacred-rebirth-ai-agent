@@ -1,72 +1,261 @@
-# Sacred Rebirth AI Marketing Agent
+# 🌟 Sacred Rebirth AI Marketing Agent
 
-Agente de IA automatizado para gestión de contenido y marketing de Sacred Rebirth.
+Sistema de **múltiples agentes IA** para automatización completa de marketing usando **CrewAI**.
+
+## 🤖 ¿Qué es un Crew de Agentes?
+
+Un **crew** es un equipo de agentes de IA especializados que trabajan juntos para lograr objetivos complejos. Cada agente tiene:
+- **Rol específico** y expertise
+- **Herramientas especializadas**
+- **Capacidad de colaborar** con otros agentes
+- **Memoria compartida** para aprender del contexto
+
+## 👥 Nuestro Crew de 6 Agentes
+
+1. **🎯 Estratega de Contenido** - Planifica estrategias de marketing
+2. **✍️ Creador de Contenido** - Genera posts para Instagram, Facebook y Email
+3. **📱 Community Manager** - Publica y gestiona redes sociales
+4. **📧 Especialista en Email Marketing** - Crea y ejecuta campañas de email
+5. **📊 Analista y Optimizador** - Analiza métricas y optimiza estrategias
+6. **👥 Especialista en Customer Success** - Gestiona leads y clientes
 
 ## 🎯 Funcionalidades
 
-- **Generación de Contenido**: Crea posts automáticos para redes sociales (Instagram, Facebook)
-- **Email Marketing**: Envía campañas promocionales personalizadas
-- **Programación de Posts**: Calendario automático de publicaciones
-- **Análisis de Engagement**: Tracking de métricas y optimización
-- **Gestión de Leads**: Seguimiento automático de clientes potenciales
+- ✅ **Generación de Contenido IA**: Posts para Instagram, Facebook y Email
+- ✅ **Publicación Automática**: Publica directamente en redes sociales
+- ✅ **Email Marketing**: Campañas personalizadas con SendGrid
+- ✅ **Gestión de Leads**: CRM básico con segmentación y nutrición
+- ✅ **Calendario de Contenido**: Programación y organización automática
+- ✅ **Análisis de Métricas**: Optimización basada en datos
+- ✅ **Campañas Multicanal**: Coordinación entre todos los canales
+- ✅ **Automatización Diaria**: Ejecuta tareas automáticamente
 
 ## 🛠️ Tecnologías
 
-- Python 3.11+
-- OpenAI API (GPT-4)
-- Meta Graph API (Instagram/Facebook)
-- SendGrid/SMTP (Email)
-- Schedule (Automatización)
+- **Python 3.11+**
+- **CrewAI** - Framework de agentes colaborativos
+- **OpenAI API (GPT-4)** - Generación de contenido
+- **LangChain** - Orquestación de LLMs
+- **Meta Graph API** - Instagram/Facebook
+- **SendGrid** - Email marketing
+- **Schedule** - Automatización de tareas
 
-## 📦 Instalación
+## 🚀 Inicio Rápido
+
+### 1. Instalación
 
 ```bash
+# Clonar repositorio
+git clone <tu-repo>
+cd sacred-rebirth-ai-agent
+
+# Instalar dependencias
 pip install -r requirements.txt
 ```
 
-## ⚙️ Configuración
-
-1. Copia `.env.example` a `.env`
-2. Configura tus API keys:
-   - `OPENAI_API_KEY`
-   - `META_ACCESS_TOKEN`
-   - `SENDGRID_API_KEY`
-   - `EMAIL_FROM`
-
-## 🚀 Uso
+### 2. Configuración
 
 ```bash
-# Generar contenido
-python src/content_generator.py
+# Copiar archivo de configuración
+cp .env.example .env
 
-# Programar posts
-python src/scheduler.py
-
-# Enviar email campaign
-python src/email_campaign.py
+# Editar con tus credenciales
+nano .env
 ```
 
-## 📁 Estructura
+**Mínimo requerido:**
+```env
+OPENAI_API_KEY=tu-api-key-aquí
+```
+
+**Para funcionalidad completa:**
+```env
+OPENAI_API_KEY=tu-api-key
+META_ACCESS_TOKEN=tu-meta-token
+INSTAGRAM_BUSINESS_ACCOUNT_ID=tu-ig-id
+FACEBOOK_PAGE_ID=tu-fb-id
+SENDGRID_API_KEY=tu-sendgrid-key
+```
+
+### 3. Uso Básico
+
+#### Modo Interactivo (Recomendado)
+```bash
+python main.py
+```
+
+#### Generar Contenido Rápido
+```bash
+# Post de Instagram
+python main.py --mode social --platform instagram --topic "Ayahuasca"
+
+# Post de Facebook  
+python main.py --mode social --platform facebook --topic "Retiro espiritual"
+
+# Email promocional
+python main.py --mode email --type promotional
+```
+
+#### Campaña Completa Automatizada
+```bash
+python main.py --mode campaign --goal "Retiro de Enero 2026"
+```
+
+#### Automatización Diaria
+```bash
+python main.py --mode daily
+```
+
+## 📖 Documentación Completa
+
+Ver **[GUIA_USO.md](GUIA_USO.md)** para:
+- Guía detallada de todos los modos
+- Uso programático desde Python
+- Configuración avanzada
+- Solución de problemas
+- Casos de uso reales
+
+## 💻 Ejemplos de Uso Programático
+
+### Generar Post de Instagram
+```python
+from src.crew import quick_instagram_post
+
+result = quick_instagram_post("Beneficios de la Ayahuasca")
+print(result)
+```
+
+### Ejecutar Campaña Completa
+```python
+from src.crew import MarketingCrew
+
+crew = MarketingCrew()
+result = crew.run_full_campaign("Retiro de Enero 2026")
+```
+
+### Automatización Diaria
+```python
+from src.crew import MarketingCrew
+
+crew = MarketingCrew()
+crew.run_daily_automation()
+```
+
+## 📁 Estructura del Proyecto
 
 ```
 sacred-rebirth-ai-agent/
-├── src/
-│   ├── content_generator.py   # Generación de contenido con IA
-│   ├── social_media.py         # Publicación en redes sociales
-│   ├── email_campaign.py       # Envío de emails
-│   └── scheduler.py            # Automatización de tareas
+├── main.py                     # 🎯 Punto de entrada principal
+├── requirements.txt            # 📦 Dependencias
+├── .env.example               # ⚙️ Configuración de ejemplo
+├── README.md                  # 📖 Este archivo
+├── GUIA_USO.md               # 📚 Guía completa de uso
+│
 ├── config/
-│   ├── prompts.py              # Templates de prompts para IA
-│   └── settings.py             # Configuración general
-├── data/
-│   └── content_calendar.json  # Calendario de contenido
-├── .env.example
-├── requirements.txt
-└── README.md
+│   ├── settings.py            # Configuración general
+│   └── prompts.py             # Templates de prompts para IA
+│
+├── src/
+│   ├── crew.py                # 🤖 Orquestación del crew
+│   ├── agents.py              # 👥 Definición de agentes
+│   ├── tasks.py               # 📋 Definición de tareas
+│   ├── tools.py               # 🔧 Herramientas personalizadas
+│   ├── content_generator.py   # ✍️ Generación de contenido
+│   ├── social_media.py        # 📱 Publicación en redes
+│   ├── email_campaign.py      # 📧 Gestión de emails
+│   └── scheduler.py           # ⏰ Programación de tareas
+│
+└── data/
+    ├── content_calendar.json  # Calendario de contenido
+    ├── leads.json             # Base de datos de leads
+    ├── generated/             # Contenido generado
+    └── reports/               # Reportes de análisis
 ```
 
-## 🌿 Sacred Rebirth
+## 🎮 Comandos Disponibles
 
-Website: https://sacred-rebirth.com
-Instagram: @sacredrebirthvalle
-Facebook: sacredbirthretreats
+| Comando | Descripción |
+|---------|-------------|
+| `python main.py` | Modo interactivo con menú |
+| `--mode strategy` | Planificación estratégica |
+| `--mode content` | Crear contenido |
+| `--mode social` | Publicar en redes sociales |
+| `--mode email` | Campaña de email |
+| `--mode leads` | Gestión de leads |
+| `--mode analytics` | Análisis de métricas |
+| `--mode campaign` | Campaña completa multicanal |
+| `--mode daily` | Automatización diaria |
+
+Ver `python main.py --help` para más opciones.
+
+## 🔧 Herramientas del Crew
+
+Cada agente tiene acceso a herramientas especializadas:
+
+- **ContentGeneratorTool** - Genera contenido optimizado por plataforma
+- **SocialMediaPublishTool** - Publica en Instagram/Facebook
+- **EmailCampaignTool** - Envía campañas de email
+- **ContentCalendarTool** - Gestiona calendario de contenido
+- **LeadsManagerTool** - Administra leads y segmentación
+
+## 📊 Flujo de Trabajo Típico
+
+```
+1. Estrategia     → El estratega planifica contenido semanal
+                    ↓
+2. Creación      → El creador genera posts optimizados
+                    ↓
+3. Revisión      → El analista revisa y optimiza
+                    ↓
+4. Publicación   → El community manager publica
+                    ↓
+5. Email         → El especialista envía campañas
+                    ↓
+6. Seguimiento   → Customer success nutre leads
+                    ↓
+7. Análisis      → El analista reporta métricas
+```
+
+## 🌟 Casos de Uso
+
+### 1. Lanzamiento de Retiro
+```bash
+python main.py --mode campaign --goal "Retiro Enero 2026"
+```
+
+### 2. Contenido Diario Automatizado
+```bash
+python main.py --mode daily
+```
+
+### 3. Nutrición de Leads
+```bash
+python main.py --mode leads --action nurture --segment interested
+```
+
+### 4. Análisis Semanal
+```bash
+python main.py --mode analytics --metric all
+```
+
+## 🤝 Contribuir
+
+Este es un proyecto en desarrollo activo. Sugerencias y mejoras son bienvenidas.
+
+## 📞 Contacto
+
+**Sacred Rebirth**
+- 🌐 Website: https://sacred-rebirth.com
+- 📸 Instagram: @sacredrebirthvalle  
+- 📘 Facebook: sacredbirthretreats
+- 📧 Email: rebirthsecred@gmail.com
+- 📱 WhatsApp: +52 722 512 3413
+- 📍 Valle de Bravo, México
+
+## 📄 Licencia
+
+Este proyecto es para uso interno de Sacred Rebirth.
+
+---
+
+Desarrollado con ❤️ usando **CrewAI** y **OpenAI GPT-4**
