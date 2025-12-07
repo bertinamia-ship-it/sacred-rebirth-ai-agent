@@ -1,1 +1,1 @@
-worker: python maya_simple.py
+worker: python telegram_bot.py
