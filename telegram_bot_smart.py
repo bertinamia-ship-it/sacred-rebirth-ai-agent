@@ -56,14 +56,24 @@ class SmartMaya:
             "daily_activities": "Daily cacao ceremonies, Temazcal (sweat lodge), Breathwork sessions, Integration circles, Yoga & meditation",
             "medicines": "Rapé & sananga medicines",
             "included": "All plant-based meals, Accommodation, Airport transfers",
-            "booking_url": "https://sacred-rebirth.com/appointment.html"
+            "booking_url": "https://sacred-rebirth.com/appointment.html"  # Corrected link
         }
         
         self.maya_personality = """You are Maya, a wise and compassionate facilitator for Sacred Rebirth. 
 You have years of experience guiding people through spiritual transformation with plant medicines.
-You are bilingual (Spanish/English) and respond in the language the person writes to you.
-You are warm, understanding, and professional. You NEVER mention prices - always direct to discovery call.
-Use spiritual emojis: 🌿✨🌌💫🙏🌱⭐️"""
+You are PERFECTLY BILINGUAL (Spanish/English) and respond naturally in whatever language the person uses.
+You are warm, understanding, professional, and conversational like a real person.
+You NEVER mention prices - always direct to discovery call with the exact link.
+Use spiritual emojis naturally: 🌿✨🌌💫🙏🌱⭐️
+
+CRITICAL RULES:
+1. Always respond in the same language the person writes to you
+2. Be conversational and natural, not robotic
+3. NEVER mention any prices, costs, or investment amounts
+4. When asked about price, ALWAYS say: "I invite you to book your free discovery call: https://sacred-rebirth.com/appointment.html"
+5. Always end responses with the booking link
+6. Give complete retreat information when asked
+7. Be intelligent and understand context"""
 
     async def get_ai_response(self, user_message: str, user_name: str = "") -> str:
         """Get intelligent response from OpenAI"""
@@ -73,44 +83,62 @@ Use spiritual emojis: 🌿✨🌌💫🙏🌱⭐️"""
             return self.get_basic_response(user_message, user_name)
         
         try:
-            # Detect language
-            language = "Spanish" if any(word in user_message.lower() for word in ['hola', 'que', 'donde', 'cuando', 'como', 'precio', 'costo']) else "English"
+            # Detect language intelligently
+            spanish_indicators = ['hola', 'que', 'donde', 'cuando', 'como', 'precio', 'costo', 'retiro', 'medicina', 'ubicación', 'incluye']
+            english_indicators = ['hello', 'what', 'where', 'when', 'how', 'price', 'cost', 'retreat', 'medicine', 'location', 'include']
             
+            spanish_count = sum(1 for word in spanish_indicators if word in user_message.lower())
+            english_count = sum(1 for word in english_indicators if word in user_message.lower())
+            
+            if spanish_count > english_count:
+                language = "Spanish"
+                discovery_text = "Te invito a agendar tu discovery call gratuito"
+                booking_text = "💫 Agenda tu discovery call:"
+            else:
+                language = "English" 
+                discovery_text = "I invite you to book your free discovery call"
+                booking_text = "💫 Book your discovery call:"
+
             system_prompt = f"""{self.maya_personality}
 
-RETREAT INFORMATION:
-- Name: {self.retreat_info['name']}
+RETREAT INFORMATION TO SHARE:
+- Retreat: {self.retreat_info['name']}
 - Dates: {self.retreat_info['dates']} 
 - Duration: {self.retreat_info['duration']}
 - Location: {self.retreat_info['location']}
+- Capacity: Only {self.retreat_info['capacity']} (exclusive, limited)
+- Target: {self.retreat_info['target_market']}
 - Ceremonies: {self.retreat_info['ceremonies']}
-- Daily Activities: {self.retreat_info['daily_activities']}
+- Activities: {self.retreat_info['daily_activities']}
 - Medicines: {self.retreat_info['medicines']}
 - Included: {self.retreat_info['included']}
 
-CRITICAL RULES:
-1. NEVER mention specific prices in any language
-2. If asked about price/cost/investment, always say: "I invite you to book your free discovery call: {self.retreat_info['booking_url']}"
-3. Always end responses with the booking link
-4. Respond in {language}
-5. Be warm, wise, and spiritual
-6. Focus on transformation and healing"""
+CRITICAL INSTRUCTIONS:
+1. Respond ONLY in {language}
+2. Be conversational and intelligent like a real facilitator
+3. If asked about price/cost/investment, say: "{discovery_text}: https://sacred-rebirth.com/appointment.html"
+4. Always end with: "{booking_text} https://sacred-rebirth.com/appointment.html"
+5. Give detailed information about the retreat when asked
+6. Be warm, spiritual, and professional"""
 
             response = self.openai_client.chat.completions.create(
                 model="gpt-4o-mini",  # Most cost-effective model
                 messages=[
                     {"role": "system", "content": system_prompt},
-                    {"role": "user", "content": f"User {user_name} says: {user_message}"}
+                    {"role": "user", "content": f"User {user_name} writes: {user_message}"}
                 ],
-                max_tokens=250,  # Reduced for cost efficiency
-                temperature=0.7
+                max_tokens=300,  # More space for detailed responses
+                temperature=0.8  # More conversational
             )
             
             ai_response = response.choices[0].message.content.strip()
             
-            # Ensure booking link is always included
-            if self.retreat_info['booking_url'] not in ai_response:
-                ai_response += f"\n\n💫 {self.retreat_info['booking_url']}"
+            # Ensure booking link is ALWAYS included
+            if "sacred-rebirth.com/appointment.html" not in ai_response:
+                if "spanish" in language.lower():
+                    ai_response += f"\n\n💫 Agenda tu discovery call: https://sacred-rebirth.com/appointment.html"
+                else:
+                    ai_response += f"\n\n💫 Book your discovery call: https://sacred-rebirth.com/appointment.html"
                 
             return ai_response
             
@@ -122,33 +150,43 @@ CRITICAL RULES:
         """Fallback basic responses if OpenAI not available"""
         
         message_lower = user_message.lower()
-        booking_link = self.retreat_info['booking_url']
+        booking_link = "https://sacred-rebirth.com/appointment.html"
         
-        # Detect language
-        if any(word in message_lower for word in ['hola', 'que', 'donde', 'cuando', 'como', 'precio', 'costo']):
+        # Detect language intelligently
+        spanish_words = ['hola', 'que', 'donde', 'cuando', 'como', 'precio', 'costo', 'retiro', 'medicina']
+        english_words = ['hello', 'what', 'where', 'when', 'how', 'price', 'cost', 'retreat', 'medicine']
+        
+        spanish_count = sum(1 for word in spanish_words if word in message_lower)
+        english_count = sum(1 for word in english_words if word in message_lower)
+        
+        if spanish_count > english_count or any(word in message_lower for word in ['hola', 'español']):
             # Spanish responses
             if any(word in message_lower for word in ['hola', 'hello', 'hi']):
-                return f"🌿 ¡Hola {user_name}! Soy Maya de Sacred Rebirth. ¿En qué puedo ayudarte con nuestro retiro de medicina sagrada de 7 noches? 💫 {booking_link}"
+                return f"🌿 ¡Hola {user_name}! Soy Maya de Sacred Rebirth. ¿En qué puedo ayudarte con nuestro retiro exclusivo de medicina sagrada? Solo 8 espacios disponibles. 💫 Agenda tu discovery call: {booking_link}"
             elif any(word in message_lower for word in ['donde', 'ubicación', 'lugar']):
-                return f"🏔️ Nuestro retiro es en Valle de Bravo, México. Un santuario sagrado en las montañas perfecto para transformación profunda. 🌿💫 {booking_link}"
-            elif any(word in message_lower for word in ['que', 'qué', 'retiro', 'incluye']):
-                return f"✨ Retiro de medicina sagrada de 7 noches: 4 ceremonias de ayahuasca, cacao diario, temazcal, trabajo de respiración, yoga, círculos de integración. Comidas y alojamiento incluidos. 11-18 enero 2025. 🌿💫 {booking_link}"
-            elif any(word in message_lower for word in ['precio', 'costo', 'cuanto']):
-                return f"💫 Te invito a agendar tu discovery call gratuito para hablar sobre la inversión y detalles personalizados. 🌿 {booking_link}"
+                return f"🏔️ Nuestro retiro exclusivo es en Valle de Bravo, México. Un santuario sagrado en las montañas, perfecto para transformación profunda con solo 8 participantes selectos. 🌿💫 Agenda tu discovery call: {booking_link}"
+            elif any(word in message_lower for word in ['que', 'qué', 'retiro', 'incluye', 'consiste']):
+                return f"✨ Retiro exclusivo de medicina sagrada (11 agosto 2025): 7 noches, 4 ceremonias ayahuasca, cacao diario, temazcal, trabajo respiración, yoga, integración. Solo 8 personas. Comidas y alojamiento incluidos. Para personas de alto nivel espiritual. 🌿💫 Agenda tu discovery call: {booking_link}"
+            elif any(word in message_lower for word in ['precio', 'costo', 'cuanto', 'inversión']):
+                return f"💫 Los detalles de inversión los conversamos personalmente en tu discovery call gratuito. Es una experiencia exclusiva para pocas personas selectas. 🌿 Agenda aquí: {booking_link}"
+            elif any(word in message_lower for word in ['medicina', 'ayahuasca', 'ceremonias']):
+                return f"🌿 Trabajamos con 4 ceremonias de ayahuasca sagrada con facilitadores experimentados, más cacao ceremonial diario, temazcal, rapé y sananga. Ambiente completamente seguro y sagrado para solo 8 participantes. 💫 Agenda tu discovery call: {booking_link}"
             else:
-                return f"🌿 Hola {user_name}, soy Maya de Sacred Rebirth. Pregúntame sobre nuestro retiro de 7 noches, ubicación, ceremonias o fechas. 💫 {booking_link}"
+                return f"🌿 Hola {user_name}, soy Maya de Sacred Rebirth. Te puedo hablar sobre nuestro retiro exclusivo de medicina sagrada, ubicación, ceremonias, fechas o lo que necesites saber. Solo 8 espacios disponibles. 💫 Agenda tu discovery call: {booking_link}"
         else:
             # English responses
             if any(word in message_lower for word in ['hello', 'hi', 'hey']):
-                return f"🌿 Hello {user_name}! I'm Maya from Sacred Rebirth. How can I help you with our 7-night sacred plant medicine retreat? 💫 {booking_link}"
+                return f"🌿 Hello {user_name}! I'm Maya from Sacred Rebirth. How can I help you with our exclusive sacred plant medicine retreat? Only 8 spaces available. 💫 Book your discovery call: {booking_link}"
             elif any(word in message_lower for word in ['where', 'location']):
-                return f"🏔️ Our retreat is in Valle de Bravo, Mexico. A sacred mountain sanctuary perfect for deep transformation. 🌿💫 {booking_link}"
-            elif any(word in message_lower for word in ['what', 'retreat', 'include']):
-                return f"✨ 7-night sacred plant medicine retreat: 4 ayahuasca ceremonies, daily cacao, temazcal, breathwork, yoga, integration circles. All meals & accommodation included. January 11-18, 2025. 🌿💫 {booking_link}"
-            elif any(word in message_lower for word in ['price', 'cost', 'money']):
-                return f"💫 I invite you to book your free discovery call to discuss investment and personalized details. 🌿 {booking_link}"
+                return f"🏔️ Our exclusive retreat takes place in Valle de Bravo, Mexico. A sacred mountain sanctuary perfect for deep transformation with only 8 select participants. 🌿💫 Book your discovery call: {booking_link}"
+            elif any(word in message_lower for word in ['what', 'retreat', 'include', 'about']):
+                return f"✨ Exclusive sacred plant medicine retreat (August 11, 2025): 7 nights, 4 ayahuasca ceremonies, daily cacao, temazcal, breathwork, yoga, integration circles. Only 8 people. All meals & accommodation included. For high-level spiritual seekers. 🌿💫 Book your discovery call: {booking_link}"
+            elif any(word in message_lower for word in ['price', 'cost', 'money', 'investment', 'much']):
+                return f"💫 Investment details are discussed personally in your free discovery call. This is an exclusive experience for select individuals only. 🌿 Book here: {booking_link}"
+            elif any(word in message_lower for word in ['medicine', 'ayahuasca', 'ceremony', 'ceremonies']):
+                return f"🌿 We work with 4 sacred ayahuasca ceremonies with experienced facilitators, plus daily ceremonial cacao, temazcal, rapé and sananga. Completely safe and sacred environment for only 8 participants. 💫 Book your discovery call: {booking_link}"
             else:
-                return f"🌿 Hello {user_name}, I'm Maya from Sacred Rebirth. Ask me about our 7-night retreat, location, ceremonies, or dates. 💫 {booking_link}"
+                return f"🌿 Hello {user_name}, I'm Maya from Sacred Rebirth. I can tell you about our exclusive sacred plant medicine retreat, location, ceremonies, dates, or whatever you need to know. Only 8 spaces available. 💫 Book your discovery call: {booking_link}"
 
 # Initialize Smart Maya
 maya = SmartMaya()
