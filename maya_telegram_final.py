@@ -2,7 +2,7 @@
 """
 MAYA TELEGRAM COMMAND CENTER - Sacred Rebirth AI Agent
 Tu centro de comando empresarial completo via Telegram
-Optimizado para Render.com deployment
+Versión simplificada para máxima compatibilidad
 """
 
 import os
@@ -11,9 +11,10 @@ from datetime import datetime, timedelta
 import asyncio
 import json
 import aiohttp
-from telegram import Update, Bot
+from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from flask import Flask
+import threading
 
 # Configurar logging
 logging.basicConfig(
@@ -26,15 +27,12 @@ logger = logging.getLogger(__name__)
 TELEGRAM_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID', '').strip()
-FACEBOOK_TOKEN = os.environ.get('FACEBOOK_PAGE_ACCESS_TOKEN', '')
-FACEBOOK_PAGE_ID = os.environ.get('FACEBOOK_PAGE_ID', '')
 
 # Verificar configuración
 print("🚀 MAYA TELEGRAM COMMAND CENTER")
 print(f"✅ Telegram: {'Configured' if TELEGRAM_TOKEN else 'Missing'}")
 print(f"✅ OpenAI: {'Configured' if OPENAI_API_KEY else 'Missing'}")
 print(f"✅ Admin ID: {'Configured' if ADMIN_CHAT_ID else 'Missing'}")
-print(f"✅ Facebook: {'Configured' if FACEBOOK_TOKEN else 'Missing'}")
 
 class MayaCommandCenter:
     def __init__(self):
@@ -375,52 +373,52 @@ Responde en español, profesional pero cálido, máximo 200 palabras."""
         await update.message.reply_text(f"🤖 **Maya AI:**\n\n{response}", parse_mode='Markdown')
 
 def main():
-    """Función principal"""
+    """Función principal - Versión simplificada"""
     if not TELEGRAM_TOKEN:
         print("❌ ERROR: TELEGRAM_BOT_TOKEN no configurado")
         return
     
-    # Crear Flask app para health check
+    # Flask health check en thread separado
     app = Flask(__name__)
     
     @app.route('/')
     def health():
         return {"status": "Maya Telegram Online", "bot_token": bool(TELEGRAM_TOKEN)}
     
-    @app.route('/health')
+    @app.route('/health')  
     def health_check():
-        return {"status": "ok", "service": "Maya Telegram Command Center"}
+        return {"status": "ok", "service": "Maya Command Center"}
     
-    # Iniciar Flask en thread separado para Render
-    import threading
-    flask_thread = threading.Thread(target=lambda: app.run(host='0.0.0.0', port=int(os.environ.get('PORT', 5000))))
-    flask_thread.daemon = True
+    # Iniciar Flask
+    def run_flask():
+        port = int(os.environ.get('PORT', 5000))
+        app.run(host='0.0.0.0', port=port)
+    
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
     flask_thread.start()
     
     print("🚀 Iniciando Maya Telegram Command Center...")
     
-    # Crear aplicación Telegram
-    telegram_app = Application.builder().token(TELEGRAM_TOKEN).build()
+    # Crear aplicación Telegram con configuración simple
+    application = Application.builder().token(TELEGRAM_TOKEN).build()
     
-    # Handlers de comandos
-    telegram_app.add_handler(CommandHandler("start", start))
-    telegram_app.add_handler(CommandHandler("commands", commands))
-    telegram_app.add_handler(CommandHandler("report", report))
-    telegram_app.add_handler(CommandHandler("content", content_generator))
-    telegram_app.add_handler(CommandHandler("facebook", facebook_content))
-    telegram_app.add_handler(CommandHandler("urgent", urgent_tasks))
-    telegram_app.add_handler(CommandHandler("pipeline", pipeline_status))
+    # Agregar handlers
+    application.add_handler(CommandHandler("start", start))
+    application.add_handler(CommandHandler("commands", commands))
+    application.add_handler(CommandHandler("report", report))
+    application.add_handler(CommandHandler("content", content_generator))
+    application.add_handler(CommandHandler("facebook", facebook_content))
+    application.add_handler(CommandHandler("urgent", urgent_tasks))
+    application.add_handler(CommandHandler("pipeline", pipeline_status))
+    application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
     
-    # Handler para mensajes generales
-    telegram_app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
-    
-    print("✅ Maya Command Center configurado!")
+    print("✅ Maya configurado!")
     print(f"📱 Bot Token: {TELEGRAM_TOKEN[:10]}...")
-    print(f"🤖 Admin ID: {ADMIN_CHAT_ID}")
-    print("🚀 Starting polling...")
+    print(f"🤖 Admin: {ADMIN_CHAT_ID}")
+    print("🚀 Iniciando polling...")
     
-    # Iniciar bot
-    telegram_app.run_polling(allowed_updates=Update.ALL_TYPES)
+    # Usar polling simple
+    application.run_polling(drop_pending_updates=True)
 
 if __name__ == '__main__':
     main()
