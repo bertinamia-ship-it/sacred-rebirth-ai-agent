@@ -27,6 +27,29 @@ class MayaEnterprise:
         self.setup_automation_schedules()
         
     # ===== CORE COMMUNICATION =====
+    def detect_language(self, text):
+        """Detecta el idioma del mensaje del usuario"""
+        spanish_indicators = ['que', 'como', 'donde', 'cuando', 'por', 'para', 'con', 'una', 'del', 'las', 'los', 'está', 'hola', 'gracias', 'por favor', 'quiero', 'necesito', 'ayuda', 'imagen', 'contenido', 'publicación', 'estrategia', 'reporte']
+        english_indicators = ['the', 'and', 'for', 'are', 'with', 'his', 'they', 'have', 'this', 'will', 'you', 'that', 'but', 'not', 'what', 'all', 'were', 'hello', 'thanks', 'please', 'want', 'need', 'help', 'image', 'content', 'post', 'strategy', 'report']
+        
+        text_lower = text.lower()
+        
+        spanish_count = sum(1 for word in spanish_indicators if word in text_lower)
+        english_count = sum(1 for word in english_indicators if word in text_lower)
+        
+        if spanish_count > english_count:
+            return 'Spanish'
+        elif english_count > spanish_count:
+            return 'English'
+        else:
+            # Default based on common patterns
+            if any(word in text_lower for word in ['hola', 'que', 'como', 'quiero', 'necesito']):
+                return 'Spanish'
+            elif any(word in text_lower for word in ['hello', 'what', 'how', 'want', 'need']):
+                return 'English'
+            else:
+                return 'Spanish'  # Default para México
+    
     def send_message(self, chat_id, text):
         try:
             url = f"{self.api_url}/sendMessage"
@@ -187,9 +210,20 @@ class MayaEnterprise:
         
         return "⚙️ Automatizaciones configuradas exitosamente"
     
-    def generate_ai_content(self, prompt):
+    def generate_ai_content(self, prompt, user_language=None):
         if not OPENAI_API_KEY:
             return "🤖 OpenAI API no configurada. Contenido básico generado."
+        
+        # Detectar idioma si no se proporciona
+        if not user_language:
+            user_language = self.detect_language(prompt)
+        
+        # System prompt bilingüe
+        language_instruction = ""
+        if user_language == 'Spanish':
+            language_instruction = "IMPORTANTE: Responde SIEMPRE en ESPAÑOL. El usuario te escribió en español, así que toda tu respuesta debe ser en español perfecto."
+        else:
+            language_instruction = "IMPORTANT: Respond ALWAYS in ENGLISH. The user wrote to you in English, so your entire response must be in perfect English."
         
         try:
             headers = {
@@ -202,7 +236,9 @@ class MayaEnterprise:
                 "messages": [
                     {
                         "role": "system", 
-                        "content": """You are Maya, the strategic AI assistant for Sacred Rebirth - a high-end ayahuasca retreat in Valle de Bravo, Mexico (August 11, 2025).
+                        "content": f"""You are Maya, the strategic AI assistant for Sacred Rebirth - a high-end ayahuasca retreat in Valle de Bravo, Mexico (August 11, 2025).
+
+{language_instruction}
 
 CRITICAL SALES RULES:
 - NEVER mention prices ($3,500) - only offer "discovery calls"
@@ -215,6 +251,23 @@ RETREAT DETAILS:
 - Date: August 11, 2025
 - Exclusive: Only 8 spaces available
 - Target: High-income individuals seeking spiritual transformation
+- Booking: https://calendly.com/sacredrebirth/discovery-call
+
+YOUR CAPABILITIES:
+1. Content Generation: Create strategic posts for Instagram/Facebook
+2. Lead Qualification: Identify serious prospects 
+3. Discovery Call Scheduling: Guide to Calendly link
+4. Brand Voice: Mystical, premium, transformational
+5. Languages: Respond in user's detected language ({user_language})
+
+CONTENT STRATEGY:
+- Pain points of successful but unfulfilled people
+- Spiritual awakening stories 
+- Ayahuasca benefits (healing, clarity, purpose)
+- Valle de Bravo's sacred energy
+- Exclusive, limited availability messaging
+
+Be intelligent, strategic, and sales-focused while maintaining spiritual authenticity."""
 - Booking: https://calendly.com/sacredrebirth/discovery-call
 
 YOUR CAPABILITIES:
@@ -444,10 +497,12 @@ https://sacred-rebirth.com/appointment.html"""
     def process_message(self, text):
         """Procesar mensajes con inteligencia artificial natural"""
         message = text.lower().strip()
+        user_language = self.detect_language(text)
         
-        # Respuestas inteligentes basadas en intención
+        # Respuestas de inicio bilingües
         if any(word in message for word in ['/start', 'start', 'hola', 'hi', 'hello']):
-            return f"""🚀 **¡Hola! Soy Maya, tu asistente AI empresarial para Sacred Rebirth!**
+            if user_language == 'Spanish':
+                return f"""🚀 **¡Hola! Soy Maya, tu asistente AI empresarial para Sacred Rebirth!**
 
 🎯 **FUNCIONALIDADES COMPLETAS:**
 ✅ Generador de fotos diario (IA)
@@ -472,92 +527,60 @@ https://sacred-rebirth.com/appointment.html"""
 • "Leads premium" - Análisis prospects
 
 🎯 **Sacred Rebirth:** Agosto 11, 2025 • Valle de Bravo • 8 espacios exclusivos"""
+            else:
+                return f"""🚀 **Hello! I'm Maya, your enterprise AI assistant for Sacred Rebirth!**
+
+🎯 **COMPLETE FEATURES:**
+✅ Daily image generator (AI)
+✅ Monthly video generator  
+✅ Answer bot Instagram/Facebook/Gmail
+✅ Post automation
+✅ Content scheduler
+✅ Automated monthly reports
+✅ AI marketing strategy
+✅ Navigation and analytics
+✅ Premium lead monitoring
+✅ Complete marketing pipeline
+
+💬 **ENTERPRISE COMMANDS:**
+• "Generate compelling content" - Converting posts
+• "Pipeline analysis" - Business status
+• "Daily image" - AI visual content
+• "Complete report" - Metrics and KPIs
+• "Marketing strategy" - Full plan
+• "Urgency post" - FOMO content
+• "Testimonial" - Transformation story
+• "Premium leads" - Prospect analysis
+
+🎯 **Sacred Rebirth:** August 11, 2025 • Valle de Bravo • 8 exclusive spaces"""
 
         # CONTENIDO LLAMATIVO PARA DISCOVERY CALLS
-        elif any(word in message for word in ['contenido', 'post', 'llamativo']) and any(word in message for word in ['discovery', 'llamadas', 'calls', 'leads']):
+        elif any(word in message for word in ['contenido', 'post', 'llamativo', 'content', 'compelling']) and any(word in message for word in ['discovery', 'llamadas', 'calls', 'leads']):
             content = self.generate_strategic_content('discovery_call')
-            return f"✨ **CONTENIDO LLAMATIVO IA - DISCOVERY CALLS**\n\n{content}\n\n🎯 **OPCIONES:**\n• '¡Publícalo Facebook!' - Auto-post\n• '¡Publícalo Instagram!' - Auto-post\n• 'Generar imagen' - Visual AI\n• 'Más contenido' - Generar otro"
+            if user_language == 'Spanish':
+                return f"✨ **CONTENIDO LLAMATIVO IA - DISCOVERY CALLS**\n\n{content}\n\n🎯 **OPCIONES:**\n• '¡Publícalo Facebook!' - Auto-post\n• '¡Publícalo Instagram!' - Auto-post\n• 'Generar imagen' - Visual AI\n• 'Más contenido' - Generar otro"
+            else:
+                return f"✨ **COMPELLING AI CONTENT - DISCOVERY CALLS**\n\n{content}\n\n🎯 **OPTIONS:**\n• 'Post to Facebook!' - Auto-post\n• 'Post to Instagram!' - Auto-post\n• 'Generate image' - AI Visual\n• 'More content' - Generate another"
 
         # ANÁLISIS COMPLETO DE PIPELINE
-        elif any(word in message for word in ['pipeline', 'análisis', 'negocio', 'estado']):
+        elif any(word in message for word in ['pipeline', 'análisis', 'negocio', 'estado', 'analysis', 'business', 'status']):
             return self.analyze_marketing_pipeline()
 
         # IMAGEN DIARIA AUTOMÁTICA
-        elif any(word in message for word in ['imagen', 'foto', 'diaria', 'visual']):
+        elif any(word in message for word in ['imagen', 'foto', 'diaria', 'visual', 'image', 'photo', 'daily']):
             return self.generate_daily_image()
 
         # CONTENIDO DE URGENCIA/FOMO  
-        elif any(word in message for word in ['urgencia', 'fomo', 'últimos', 'espacios']):
+        elif any(word in message for word in ['urgencia', 'fomo', 'últimos', 'espacios', 'urgency', 'last', 'spaces']):
             content = self.generate_strategic_content('urgency')
-            return f"⚡ **CONTENIDO URGENCIA GENERADO**\n\n{content}\n\n🔥 **LISTO PARA:** Facebook, Instagram, Email"
+            if user_language == 'Spanish':
+                return f"⚡ **CONTENIDO URGENCIA GENERADO**\n\n{content}\n\n🔥 **LISTO PARA:** Facebook, Instagram, Email"
+            else:
+                return f"⚡ **URGENCY CONTENT GENERATED**\n\n{content}\n\n🔥 **READY FOR:** Facebook, Instagram, Email"
 
-        # TESTIMONIAL STRATEGY
-        elif any(word in message for word in ['testimonio', 'historia', 'transformación']):
-            content = self.generate_strategic_content('testimonial')
-            return f"💫 **TESTIMONIO ESTRATÉGICO IA**\n\n{content}\n\n✨ **Auténtico pero fictional - Optimizado para conversión**"
-
-        # PUBLICACIÓN AUTOMÁTICA FACEBOOK
-        elif any(word in message for word in ['facebook', 'publícalo', 'publicar']):
-            fb_content = self.generate_strategic_content('discovery_call')
-            result = self.post_to_facebook(fb_content)
-            return f"{result}\n\n📊 **TRACKING ACTIVADO** - Monitoreando engagement"
-
-        # PUBLICACIÓN AUTOMÁTICA INSTAGRAM  
-        elif any(word in message for word in ['instagram', 'publícalo', 'ig']):
-            ig_content = self.generate_strategic_content('discovery_call')
-            result = self.post_to_instagram(ig_content)
-            return f"{result}\n\n📸 **CON IMAGEN AI** - Optimizado para algoritmo"
-
-        # REPORTE EMPRESARIAL COMPLETO
-        elif any(word in message for word in ['reporte', 'report', 'métricas', 'kpis']):
-            return self.generate_monthly_report()
-
-        # ESTRATEGIA MARKETING COMPLETA
-        elif any(word in message for word in ['estrategia', 'marketing', 'plan', 'llenar']):
-            strategy = self.generate_ai_content(f"""
-Crea estrategia marketing COMPLETA para Sacred Rebirth:
-
-OBJETIVO: 8 espacios × $3,500 = $28,000 revenue
-DEADLINE: Agosto 11, 2025 ({(datetime(2025, 8, 11) - datetime.now()).days} días)
-TARGET: Alto ingreso, 35-55, transformación espiritual
-
-INCLUIR:
-1. Funnel de ventas específico
-2. Contenido semanal por plataforma  
-3. Tácticas de urgencia y escasez
-4. Email sequences
-5. Discovery call optimization
-6. Pricing strategy (sin revelar precio)
-7. KPIs y métricas
-8. Timeline de ejecución
-
-FORMATO: Plan implementable step-by-step""")
-            
-            return f"🎯 **ESTRATEGIA MARKETING EMPRESARIAL**\n\n{strategy}\n\n💡 **Maya puede ejecutar automáticamente cada táctica**"
-
-        # LEADS PREMIUM ANALYSIS
-        elif any(word in message for word in ['leads', 'prospects', 'clientes', 'premium']):
-            premium_leads = len([l for l in self.leads_database if l.get('score', 0) >= 7])
-            return f"""👥 **ANÁLISIS LEADS PREMIUM**
-
-🎯 **LEADS ESTADO:**
-• Total leads: {len(self.leads_database)}
-• Premium (score 7+): {premium_leads}  
-• Conversion rate estimado: 15-25%
-• Revenue potential: ${premium_leads * 3500:,}
-
-🔍 **LEAD SCORING AUTOMÁTICO:**
-• CEO/Entrepreneur: +3 points
-• Spiritual interest: +2 points  
-• Ayahuasca experience: +3 points
-• Premium indicators: +2 points
-
-⚡ **ACCIÓN RECOMENDADA:**
-{self.generate_ai_content('Suggest specific follow-up tactics for premium leads interested in Sacred Rebirth ayahuasca retreat. Focus on personalization and urgency.')}"""
-
-        # RESPUESTA GENERAL INTELIGENTE
+        # RESPUESTA GENERAL INTELIGENTE CON IDIOMA DETECTADO
         else:
-            return self.generate_ai_content(text)"""
+            return self.generate_ai_content(text, user_language)"""
         """Procesar mensajes con inteligencia artificial natural"""
         message = text.lower().strip()
         
