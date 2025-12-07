@@ -72,13 +72,25 @@ def webhook_handler():
                             
                             print(f"💬 Mensaje de {sender_id}: {message_text}")
                             
-                            # Generar respuesta usando appointment setter
+                            # Generar respuesta usando appointment setter bilingüe
                             question_type = appointment_agent.analyze_message(message_text)
                             response_text = appointment_agent.generate_response(message_text, question_type)
                             
                             # Enviar respuesta
                             send_result = send_facebook_message(sender_id, response_text)
                             print(f"📤 Respuesta enviada: {send_result}")
+                            
+                            # Log para seguimiento
+                            import datetime
+                            log_entry = {
+                                "timestamp": datetime.datetime.now().isoformat(),
+                                "sender_id": sender_id,
+                                "message": message_text,
+                                "question_type": question_type,
+                                "response": response_text[:100] + "...",
+                                "language": appointment_agent.detect_language(message_text)
+                            }
+                            print(f"📊 Log: {log_entry}")
                         
                         # Manejar postback buttons (si se implementan en el futuro)
                         elif 'postback' in messaging_event:

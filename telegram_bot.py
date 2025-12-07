@@ -139,6 +139,13 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 /models - Ver modelos de IA disponibles
 /teach - Enseñarme algo nuevo
 
+**📱 FACEBOOK AUTOMATION:**
+/setup_facebook - Configurar respuestas automáticas FB
+/test_maya [pregunta] - Probar Maya appointment setter
+• Maya responde automáticamente en Facebook
+• Bilingüe (español/inglés)
+• Nunca menciona precios → discovery call
+
 **📱 PUBLICACIÓN Y CONTENIDO:**
 /facebook [contenido] - Publicar en Facebook
 /image [tema] - Generar imagen
@@ -973,6 +980,71 @@ async def weekly_calendar_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE
         await update.message.reply_text(f"❌ Error: {str(e)}")
 
 
+async def setup_facebook(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /setup_facebook - Configurar webhook de Facebook"""
+    
+    setup_instructions = """
+🔧 **CONFIGURAR RESPUESTAS AUTOMÁTICAS DE FACEBOOK**
+
+Maya ya está lista para responder automáticamente en Facebook (español e inglés). Solo necesitas configurar el webhook:
+
+**PASO 1: Obtener URL del webhook**
+Tu webhook URL será: `https://[tu-app].up.railway.app/webhook`
+
+**PASO 2: En Facebook Developer Console**
+1. Ve a: https://developers.facebook.com/apps/
+2. Tu app "Sacred Rebirth Agent"  
+3. **Webhooks** → **Page** → Subscribe
+
+**PASO 3: Configurar**
+• **URL**: `https://[railway-url]/webhook`
+• **Token**: `sacred_rebirth_webhook_2025`
+• **Fields**: ✅ messages
+
+**¿QUÉ HARÁ MAYA?**
+✅ Responde automáticamente (español/inglés)
+✅ Nunca menciona precios → discovery call
+✅ Info sobre ubicación, retiro, medicinas
+
+**PROBAR:** `/test_maya ¿Cuánto cuesta?`
+"""
+    
+    await update.message.reply_text(setup_instructions, parse_mode='Markdown')
+
+
+async def test_maya(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /test_maya - Probar respuestas de Maya"""
+    
+    if not context.args:
+        await update.message.reply_text(
+            "🤖 **Probar Maya**\n\n"
+            "`/test_maya [pregunta]`\n\n"
+            "**Ejemplos:**\n"
+            "• `/test_maya ¿Dónde está el retiro?`\n"
+            "• `/test_maya Where is the retreat?`\n"
+            "• `/test_maya ¿Cuánto cuesta?`",
+            parse_mode='Markdown'
+        )
+        return
+    
+    test_question = ' '.join(context.args)
+    
+    try:
+        await update.message.reply_text(f"🤖 Pregunta: {test_question}")
+        await update.message.chat.send_action("typing")
+        
+        question_type = appointment_agent.analyze_message(test_question)
+        maya_response = appointment_agent.generate_response(test_question, question_type)
+        
+        await update.message.reply_text(f"💬 **Maya responde:**\n{maya_response}")
+        
+        language = appointment_agent.detect_language(test_question)
+        await update.message.reply_text(f"📊 Idioma: {language} | Tipo: {question_type}")
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
 def main():
     """Inicia el bot de Telegram"""
     
@@ -1006,6 +1078,8 @@ def main():
     application.add_handler(CommandHandler("image", generate_image))
     application.add_handler(CommandHandler("daily", daily_content_cmd))
     application.add_handler(CommandHandler("weekly", weekly_calendar_cmd))
+    application.add_handler(CommandHandler("setup_facebook", setup_facebook))
+    application.add_handler(CommandHandler("test_maya", test_maya))
     
     # Handler para todos los mensajes de texto
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
