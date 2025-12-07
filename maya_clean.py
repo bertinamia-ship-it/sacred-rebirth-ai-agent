@@ -355,10 +355,6 @@ def send_startup_notification():
         except Exception as e:
             print(f"⚠️ Notification failed: {e}")
 
-@app.route('/')
-def health():
-    return jsonify({"status": "Maya Online", "telegram": bool(TELEGRAM_TOKEN)})
-
 def polling():
     print("🔄 Polling started - Maya will respond to any admin")
     
