@@ -72,8 +72,7 @@ def health():
     return jsonify({"status": "Maya Online", "telegram": bool(TELEGRAM_TOKEN)})
 
 def polling():
-    if not TELEGRAM_TOKEN or not ADMIN_CHAT_ID:
-        return
+    print("🔄 Polling started - Maya will respond to any admin")
     
     offset = None
     while True:
@@ -96,12 +95,15 @@ def polling():
                             chat_id = str(message['chat']['id'])
                             text = message.get('text', '')
                             
-                            if chat_id == ADMIN_CHAT_ID:
-                                print(f"Command: {text}")
+                            # Respond to configured admin OR if no admin set, respond to anyone
+                            if not ADMIN_CHAT_ID or chat_id == ADMIN_CHAT_ID:
+                                print(f"📱 Command from {chat_id}: {text}")
                                 response = maya.process_message(text)
                                 maya.send_message(chat_id, response)
+                            else:
+                                print(f"🔒 Ignored message from {chat_id} (not admin)")
         except Exception as e:
-            print(f"Error: {e}")
+            print(f"❌ Polling error: {e}")
         
         time.sleep(1)
 
@@ -110,19 +112,24 @@ def main():
         print("❌ No token")
         return
     
+    print("🚀 Maya Starting...")
+    print(f"Token: {TELEGRAM_TOKEN[:10]}...")
+    print(f"Admin: {ADMIN_CHAT_ID}")
+    print("🔧 Starting without admin check...")
+    
     def run_flask():
         port = int(os.environ.get('PORT', 5000))
         app.run(host='0.0.0.0', port=port, debug=False)
     
     threading.Thread(target=run_flask, daemon=True).start()
     
-    print("🚀 Maya Starting...")
-    print(f"Token: {TELEGRAM_TOKEN[:10]}...")
-    print(f"Admin: {ADMIN_CHAT_ID}")
-    
     if ADMIN_CHAT_ID:
         maya.send_message(ADMIN_CHAT_ID, "🚀 Maya Online! Envía 'report' para empezar.")
+        print("✅ Startup message sent")
+    else:
+        print("⚠️ No admin ID - Maya will work but only respond to configured admin")
     
+    print("🤖 Starting polling...")
     polling()
 
 if __name__ == '__main__':
