@@ -236,38 +236,30 @@ class MayaEnterprise:
                 "messages": [
                     {
                         "role": "system", 
-                        "content": f"""You are Maya, the strategic AI assistant for Sacred Rebirth - a high-end ayahuasca retreat in Valle de Bravo, Mexico (August 11, 2025).
+                        "content": f"""You are Maya, an extremely intelligent AI assistant with the full power of GPT-4. You have complete knowledge and can handle ANY topic, question, or request with expert-level intelligence.
 
 {language_instruction}
 
-CRITICAL SALES RULES:
-- NEVER mention prices ($3,500) - only offer "discovery calls"
-- Focus on transformation, not transactions
-- Qualify leads for high-income spiritual seekers
-- Generate strategic content that attracts premium clients
+BUSINESS CONTEXT (when relevant):
+You assist with Sacred Rebirth - an ayahuasca retreat in Valle de Bravo, Mexico (August 11, 2025). Only 8 exclusive spaces available. Never mention the price ($3,500) - only offer discovery calls: https://calendly.com/sacredrebirth/discovery-call
 
-RETREAT DETAILS:
-- Location: Valle de Bravo, Mexico  
-- Date: August 11, 2025
-- Exclusive: Only 8 spaces available
-- Target: High-income individuals seeking spiritual transformation
-- Booking: https://calendly.com/sacredrebirth/discovery-call
+YOUR INTELLIGENCE LEVEL:
+- You have the same intelligence as ChatGPT
+- You can handle complex reasoning, analysis, creativity
+- You understand context, nuance, and subtext
+- You can write, analyze, solve problems, be creative
+- You don't need to be "taught" basic things
+- You're an expert in marketing, business, spirituality, technology, etc.
 
-YOUR CAPABILITIES:
-1. Content Generation: Create strategic posts for Instagram/Facebook
-2. Lead Qualification: Identify serious prospects 
-3. Discovery Call Scheduling: Guide to Calendly link
-4. Brand Voice: Mystical, premium, transformational
-5. Languages: Respond in user's detected language ({user_language})
+CAPABILITIES:
+✅ Generate images with DALL-E 3
+✅ Create marketing content and strategies  
+✅ Post to Facebook/Instagram automatically
+✅ Analyze business data and provide insights
+✅ Handle any conversation topic intelligently
+✅ Be creative, analytical, helpful, and smart
 
-CONTENT STRATEGY:
-- Pain points of successful but unfulfilled people
-- Spiritual awakening stories 
-- Ayahuasca benefits (healing, clarity, purpose)
-- Valle de Bravo's sacred energy
-- Exclusive, limited availability messaging
-
-Be intelligent, strategic, and sales-focused while maintaining spiritual authenticity."""
+Be as intelligent and helpful as ChatGPT. Don't act limited or restricted. Handle any topic the user brings up with full AI intelligence."""
 - Booking: https://calendly.com/sacredrebirth/discovery-call
 
 YOUR CAPABILITIES:
@@ -495,90 +487,50 @@ For social media marketing of ayahuasca/plant medicine retreat."""
 https://sacred-rebirth.com/appointment.html"""
 
     def process_message(self, text):
-        """Procesar mensajes con inteligencia artificial natural"""
+        """Procesar mensajes con inteligencia artificial completa"""
         message = text.lower().strip()
         user_language = self.detect_language(text)
         
-        # Respuestas de inicio bilingües
-        if any(word in message for word in ['/start', 'start', 'hola', 'hi', 'hello']):
+        # Solo manejar comandos de sistema específicos, todo lo demás va a IA completa
+        if any(word in message for word in ['/start', 'start']) and len(message) < 10:
             if user_language == 'Spanish':
-                return f"""🚀 **¡Hola! Soy Maya, tu asistente AI empresarial para Sacred Rebirth!**
+                return """🚀 **¡Hola! Soy Maya, tu asistente AI súper inteligente!**
 
-🎯 **FUNCIONALIDADES COMPLETAS:**
-✅ Generador de fotos diario (IA)
-✅ Generador de videos mensual  
-✅ Answer bot Instagram/Facebook/Gmail
-✅ Automatización de posts
-✅ Scheduler de contenido
-✅ Reportes mensuales automatizados
-✅ Estrategia de marketing IA
-✅ Navegación y analytics
-✅ Monitoreo de leads premium
-✅ Pipeline de marketing completo
+🧠 **Tengo la misma inteligencia que ChatGPT** - Puedo ayudarte con cualquier cosa:
 
-💬 **COMANDOS EMPRESARIALES:**
-• "Generar contenido llamativo" - Posts que convierten
-• "Análisis de pipeline" - Estado del negocio
-• "Imagen diaria" - Contenido visual AI
-• "Reporte completo" - Métricas y KPIs
-• "Estrategia marketing" - Plan completo
-• "Post urgencia" - Contenido FOMO
-• "Testimonio" - Historia transformación
-• "Leads premium" - Análisis prospects
+💼 **Para Sacred Rebirth:**
+• Estrategias de marketing y contenido
+• Análisis de negocio y métricas  
+• Generación de imágenes con IA
+• Publicación automática en redes
 
-🎯 **Sacred Rebirth:** Agosto 11, 2025 • Valle de Bravo • 8 espacios exclusivos"""
+🎯 **Para TODO lo demás:**
+• Preguntas complejas y análisis
+• Creatividad y resolución de problemas
+• Tecnología, negocios, espiritualidad
+• Cualquier tema que necesites
+
+💬 **Háblame natural** - No necesitas comandos específicos. Soy tan inteligente como ChatGPT."""
             else:
-                return f"""🚀 **Hello! I'm Maya, your enterprise AI assistant for Sacred Rebirth!**
+                return """🚀 **Hello! I'm Maya, your super intelligent AI assistant!**
 
-🎯 **COMPLETE FEATURES:**
-✅ Daily image generator (AI)
-✅ Monthly video generator  
-✅ Answer bot Instagram/Facebook/Gmail
-✅ Post automation
-✅ Content scheduler
-✅ Automated monthly reports
-✅ AI marketing strategy
-✅ Navigation and analytics
-✅ Premium lead monitoring
-✅ Complete marketing pipeline
+🧠 **I have the same intelligence as ChatGPT** - I can help you with anything:
 
-💬 **ENTERPRISE COMMANDS:**
-• "Generate compelling content" - Converting posts
-• "Pipeline analysis" - Business status
-• "Daily image" - AI visual content
-• "Complete report" - Metrics and KPIs
-• "Marketing strategy" - Full plan
-• "Urgency post" - FOMO content
-• "Testimonial" - Transformation story
-• "Premium leads" - Prospect analysis
+💼 **For Sacred Rebirth:**
+• Marketing strategies and content
+• Business analysis and metrics  
+• AI image generation
+• Automatic social media posting
 
-🎯 **Sacred Rebirth:** August 11, 2025 • Valle de Bravo • 8 exclusive spaces"""
+🎯 **For EVERYTHING else:**
+• Complex questions and analysis
+• Creativity and problem solving
+• Technology, business, spirituality
+• Any topic you need
 
-        # CONTENIDO LLAMATIVO PARA DISCOVERY CALLS
-        elif any(word in message for word in ['contenido', 'post', 'llamativo', 'content', 'compelling']) and any(word in message for word in ['discovery', 'llamadas', 'calls', 'leads']):
-            content = self.generate_strategic_content('discovery_call')
-            if user_language == 'Spanish':
-                return f"✨ **CONTENIDO LLAMATIVO IA - DISCOVERY CALLS**\n\n{content}\n\n🎯 **OPCIONES:**\n• '¡Publícalo Facebook!' - Auto-post\n• '¡Publícalo Instagram!' - Auto-post\n• 'Generar imagen' - Visual AI\n• 'Más contenido' - Generar otro"
-            else:
-                return f"✨ **COMPELLING AI CONTENT - DISCOVERY CALLS**\n\n{content}\n\n🎯 **OPTIONS:**\n• 'Post to Facebook!' - Auto-post\n• 'Post to Instagram!' - Auto-post\n• 'Generate image' - AI Visual\n• 'More content' - Generate another"
+💬 **Talk to me naturally** - No specific commands needed. I'm as intelligent as ChatGPT."""
 
-        # ANÁLISIS COMPLETO DE PIPELINE
-        elif any(word in message for word in ['pipeline', 'análisis', 'negocio', 'estado', 'analysis', 'business', 'status']):
-            return self.analyze_marketing_pipeline()
-
-        # IMAGEN DIARIA AUTOMÁTICA
-        elif any(word in message for word in ['imagen', 'foto', 'diaria', 'visual', 'image', 'photo', 'daily']):
-            return self.generate_daily_image()
-
-        # CONTENIDO DE URGENCIA/FOMO  
-        elif any(word in message for word in ['urgencia', 'fomo', 'últimos', 'espacios', 'urgency', 'last', 'spaces']):
-            content = self.generate_strategic_content('urgency')
-            if user_language == 'Spanish':
-                return f"⚡ **CONTENIDO URGENCIA GENERADO**\n\n{content}\n\n🔥 **LISTO PARA:** Facebook, Instagram, Email"
-            else:
-                return f"⚡ **URGENCY CONTENT GENERATED**\n\n{content}\n\n🔥 **READY FOR:** Facebook, Instagram, Email"
-
-        # RESPUESTA GENERAL INTELIGENTE CON IDIOMA DETECTADO
+        # Para todo lo demás, usar inteligencia completa de IA
         else:
             return self.generate_ai_content(text, user_language)"""
         """Procesar mensajes con inteligencia artificial natural"""
