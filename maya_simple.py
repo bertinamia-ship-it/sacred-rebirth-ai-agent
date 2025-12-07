@@ -25,18 +25,24 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
 I'm Maya, facilitator for Sacred Rebirth.
 
-**🌿 Transformation Retreat**
-📅 January 11th, 2025  
+**🌿 Sacred Plant Medicine Retreat**
+📅 January 11-18, 2025  
 📍 Valle de Bravo, Mexico
-⏱️ 3 days, 2 nights
+⏱️ 7 nights, 8 days immersion
 
-**✨ Includes:**
-• Sacred ayahuasca
-• Ceremonial temazcal  
-• Ceremonial cacao
-• Complete guidance
+**✨ What's Included:**
+• 4 Sacred ayahuasca ceremonies
+• Daily cacao ceremonies
+• Temazcal (sweat lodge) 
+• Rapé & sananga medicines
+• Breathwork sessions
+• Integration circles
+• Yoga & meditation
+• All meals (plant-based)
+• Accommodation
+• Airport transfers
 
-💫 Free discovery call:
+💫 Free discovery call to discuss your journey:
 https://sacred-rebirth.com/appointment.html
 
 How can I help you? 🌿
@@ -52,25 +58,31 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
 
     # Maya responds automatically
     if 'hola' in user_message or 'hello' in user_message or 'hi' in user_message:
-        response = f"🌿 Hello {user_name}! I'm Maya from Sacred Rebirth. How can I help you with our retreats? 💫 https://sacred-rebirth.com/appointment.html"
+        response = f"🌿 Hello {user_name}! I'm Maya from Sacred Rebirth. How can I help you with our 7-night plant medicine retreat? 💫 https://sacred-rebirth.com/appointment.html"
         
     elif 'donde' in user_message or 'ubicación' in user_message or 'where' in user_message or 'location' in user_message:
-        response = "🏔️ Valle de Bravo, Estado de México. A sacred place in the mountains, perfect for deep transformation. 🌿💫 https://sacred-rebirth.com/appointment.html"
+        response = "🏔️ Valle de Bravo, Estado de México. A sacred mountain sanctuary perfect for deep transformation and healing. 🌿💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'retiro' in user_message or 'retreat' in user_message or 'what is' in user_message or 'que es' in user_message:
-        response = "✨ 3-day retreat with sacred ayahuasca, temazcal, ceremonial cacao. January 11th 2025 in Valle de Bravo. 🌿💫 https://sacred-rebirth.com/appointment.html"
+    elif 'retiro' in user_message or 'retreat' in user_message or 'what is' in user_message or 'que es' in user_message or 'include' in user_message:
+        response = "✨ 7-night sacred plant medicine retreat: 4 ayahuasca ceremonies, daily cacao, temazcal, breathwork, yoga, integration circles. All meals & accommodation included. Jan 11-18, 2025. 🌿💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'medicina' in user_message or 'ayahuasca' in user_message or 'medicine' in user_message:
-        response = "🌿 Sacred ayahuasca, ceremonial temazcal, heart cacao and rapé. With experienced facilitators in safe environment. 💫 https://sacred-rebirth.com/appointment.html"
+    elif 'medicina' in user_message or 'ayahuasca' in user_message or 'medicine' in user_message or 'ceremony' in user_message:
+        response = "🌿 4 sacred ayahuasca ceremonies with experienced facilitators, plus daily cacao ceremonies, rapé, sananga, and temazcal. Deep healing in safe sacred space. 💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'precio' in user_message or 'costo' in user_message or 'cost' in user_message or 'price' in user_message:
-        response = "💫 I invite you to schedule your free discovery call to discuss investment and details. Personalized conversation with no commitment. 🌿 https://sacred-rebirth.com/appointment.html"
+    elif 'precio' in user_message or 'costo' in user_message or 'cost' in user_message or 'price' in user_message or 'investment' in user_message:
+        response = "💫 Investment details are discussed personally in our free discovery call. I'd love to understand your intentions and explain the full value of this transformation. 🌿 https://sacred-rebirth.com/appointment.html"
+        
+    elif 'food' in user_message or 'meals' in user_message or 'comida' in user_message:
+        response = "🥗 All plant-based meals included! Nourishing, organic food to support your healing journey and prepare your body for the medicines. 🌿💫 https://sacred-rebirth.com/appointment.html"
+        
+    elif 'accommodation' in user_message or 'room' in user_message or 'stay' in user_message:
+        response = "🏡 Beautiful accommodation included in our sacred mountain sanctuary. Peaceful environment for rest and integration between ceremonies. 🌿💫 https://sacred-rebirth.com/appointment.html"
         
     elif 'test' in user_message or 'prueba' in user_message:
         response = "✅ Maya working! Bot active, ready for appointment setting. Sacred Rebirth operational. 🌿✨"
         
     else:
-        response = f"🌿 Hello {user_name}, I'm Maya from Sacred Rebirth. Ask me about location, retreat, medicines or dates. 💫 https://sacred-rebirth.com/appointment.html"
+        response = f"🌿 Hello {user_name}, I'm Maya from Sacred Rebirth. Ask me about our 7-night plant medicine retreat, location, what's included, or ceremonies. 💫 https://sacred-rebirth.com/appointment.html"
 
     await update.message.reply_text(response)
 
@@ -79,8 +91,8 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     await update.message.reply_text("""✅ **Maya Status**
 🤖 Bot: Active
 🌿 Appointment setter: OK
-📅 Retreat: January 11th 2025
-📍 Valle de Bravo
+📅 Retreat: January 11-18, 2025 (7 nights)
+📍 Valle de Bravo, Mexico
 💫 System operational""", parse_mode='Markdown')
 
 def main():
