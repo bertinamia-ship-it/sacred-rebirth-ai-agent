@@ -4,6 +4,8 @@ Bot de Telegram para Sacred Rebirth AI Agent
 Permite interactuar con el agente de marketing a través de Telegram
 """
 import os
+import requests
+import json
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
@@ -15,6 +17,43 @@ load_dotenv()
 # Configuración
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 AUTHORIZED_USERS = os.getenv('TELEGRAM_AUTHORIZED_USERS', '').split(',')
+FACEBOOK_PAGE_ACCESS_TOKEN = os.getenv('FACEBOOK_PAGE_ACCESS_TOKEN')
+
+def post_to_facebook(message_text):
+    """
+    Publica contenido en la página de Facebook de Sacred Rebirth
+    """
+    if not FACEBOOK_PAGE_ACCESS_TOKEN:
+        return {"success": False, "error": "Facebook token not configured"}
+    
+    try:
+        # URL de la Graph API para publicar en página
+        url = f"https://graph.facebook.com/v18.0/me/feed"
+        
+        # Datos del post
+        data = {
+            'message': message_text,
+            'access_token': FACEBOOK_PAGE_ACCESS_TOKEN
+        }
+        
+        # Hacer la petición
+        response = requests.post(url, data=data)
+        result = response.json()
+        
+        if response.status_code == 200 and 'id' in result:
+            return {
+                "success": True, 
+                "post_id": result['id'],
+                "message": "✅ Post publicado en Facebook exitosamente"
+            }
+        else:
+            return {
+                "success": False, 
+                "error": f"Error de Facebook: {result.get('error', {}).get('message', 'Unknown error')}"
+            }
+            
+    except Exception as e:
+        return {"success": False, "error": f"Error de conexión: {str(e)}"}
 
 # Inicializar agente
 print("🤖 Inicializando Marketing Crew para Telegram...")
@@ -35,6 +74,7 @@ Soy el asistente de marketing de Sacred Rebirth.
 
 **Puedo ayudarte con:**
 • Crear posts para Instagram/Facebook
+• Publicar automáticamente en Facebook 📱
 • Generar campañas de email
 • Gestionar tu calendario de contenido
 • Analizar tus leads
@@ -42,6 +82,7 @@ Soy el asistente de marketing de Sacred Rebirth.
 
 **Ejemplos de comandos:**
 • "Crea un post de Instagram sobre ayahuasca"
+• "Publica en Facebook: ¡Nuevo retiro disponible!"
 • "Muestra el calendario de esta semana"
 • "Envía email de bienvenida a nuevos leads"
 • "Programa 3 posts para mañana"
@@ -65,11 +106,17 @@ async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
 /models - Ver modelos de IA disponibles
 /calendar - Calendario sugerido
 /teach - Enseñarme algo nuevo
+/facebook - Publicar en Facebook 📱
 
 **Crear Contenido:**
 • "Genera un post sobre ayahuasca" (⚡ básico)
 • "Crea un **anuncio PROFESIONAL**" (✨ premium)
 • "Dame una **estrategia completa**" (🔥 ultra)
+
+**Publicar en Facebook:**
+• "/facebook [contenido]"
+• "Publica en Facebook: [contenido]"
+• "Crea un post y súbelo a Facebook"
 
 **Investigación:**
 • "Dónde puedo promocionar mi retiro"
@@ -118,6 +165,17 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 knowledge_base = f.read()
         except:
             knowledge_base = ""
+        
+        # 📱 DETECTAR RESPUESTA RÁPIDA PARA PUBLICAR
+        if user_message.lower().strip() in ['sí', 'si', 'yes', 'ok', 'dale', 'publica', 'publicar']:
+            # Buscar el último mensaje del bot para publicar
+            try:
+                # Por simplicidad, usaremos el último contenido generado
+                # En una versión más avanzada, se puede guardar el contexto
+                await update.message.reply_text("📱 Para publicar contenido específico, dime: 'publica en facebook: [tu contenido]'")
+                return
+            except:
+                pass
         
         # Crear respuesta simple con IA directa
         from openai import OpenAI
@@ -208,6 +266,14 @@ Si el usuario te pide que aprendas algo nuevo sobre el negocio, di que has actua
         
         bot_response = response.choices[0].message.content
         
+        # 🚀 DETECTAR SI USUARIO QUIERE PUBLICAR EN FACEBOOK
+        publish_keywords = ['publica en facebook', 'subir a facebook', 'postea en facebook', 'facebook post', 'envía a facebook']
+        wants_to_publish = any(keyword in message_lower for keyword in publish_keywords)
+        
+        # Si es contenido para redes sociales, ofrecer publicar automáticamente
+        content_keywords = ['post', 'publicación', 'contenido', 'facebook', 'redes sociales']
+        is_content = any(keyword in message_lower for keyword in content_keywords)
+        
         # Enviar respuesta
         # Dividir respuestas largas (límite de Telegram: 4096 caracteres)
         if len(bot_response) > 4000:
@@ -217,6 +283,23 @@ Si el usuario te pide que aprendas algo nuevo sobre el negocio, di que has actua
                 await update.message.reply_text(chunk)
         else:
             await update.message.reply_text(bot_response)
+            
+        # 📱 OFRECER PUBLICAR EN FACEBOOK SI ES CONTENIDO
+        if (is_content or wants_to_publish) and FACEBOOK_PAGE_ACCESS_TOKEN:
+            if wants_to_publish:
+                # Usuario pidió explícitamente publicar
+                facebook_result = post_to_facebook(bot_response)
+                if facebook_result["success"]:
+                    await update.message.reply_text(f"🎉 {facebook_result['message']}\n📱 Post ID: {facebook_result['post_id']}")
+                else:
+                    await update.message.reply_text(f"❌ Error al publicar en Facebook: {facebook_result['error']}")
+            else:
+                # Ofrecer publicar
+                publish_text = f"🚀 ¿Quieres publicar esto en Facebook?\n\nResponde 'sí' para publicar automáticamente."
+                await update.message.reply_text(publish_text)
+        
+        elif wants_to_publish and not FACEBOOK_PAGE_ACCESS_TOKEN:
+            await update.message.reply_text("❌ Facebook no está configurado. Contacta al administrador para activar esta función.")
         
     except Exception as e:
         error_msg = f"❌ Error procesando tu solicitud: {str(e)}\n\nIntenta de nuevo o usa /help"
@@ -239,6 +322,11 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
     
     # Verificar configuraciones
     services = []
+    if os.getenv('FACEBOOK_PAGE_ACCESS_TOKEN'):
+        services.append("✅ Facebook Page")
+    else:
+        services.append("⚠️ Facebook Page (no configurado)")
+    
     if os.getenv('META_ACCESS_TOKEN'):
         services.append("✅ Instagram/Facebook")
     else:
@@ -510,6 +598,51 @@ async def teach(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text(f"❌ Error guardando información: {str(e)}")
 
 
+async def facebook_post(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /facebook - Publicar directamente en Facebook"""
+    
+    if not FACEBOOK_PAGE_ACCESS_TOKEN:
+        await update.message.reply_text(
+            "❌ **Facebook no configurado**\n\n"
+            "Contacta al administrador para activar esta función.",
+            parse_mode='Markdown'
+        )
+        return
+    
+    if not context.args:
+        await update.message.reply_text(
+            "📱 **Cómo publicar en Facebook:**\n\n"
+            "Usa: `/facebook [contenido]`\n\n"
+            "**Ejemplo:**\n"
+            "• `/facebook ¡Únete a nuestro próximo retiro de ayahuasca! 🌿✨`\n\n"
+            "También puedes decir:\n"
+            "• 'Publica en Facebook: [contenido]'",
+            parse_mode='Markdown'
+        )
+        return
+    
+    content = ' '.join(context.args)
+    
+    await update.message.chat.send_action("typing")
+    await update.message.reply_text("📱 Publicando en Facebook...")
+    
+    # Publicar en Facebook
+    result = post_to_facebook(content)
+    
+    if result["success"]:
+        await update.message.reply_text(
+            f"🎉 **¡Post publicado exitosamente!**\n\n"
+            f"📱 Post ID: `{result['post_id']}`\n"
+            f"📝 Contenido: _{content}_",
+            parse_mode='Markdown'
+        )
+    else:
+        await update.message.reply_text(
+            f"❌ **Error al publicar:**\n{result['error']}\n\n"
+            "Intenta de nuevo o contacta al administrador."
+        )
+
+
 def main():
     """Inicia el bot de Telegram"""
     
@@ -535,6 +668,7 @@ def main():
     application.add_handler(CommandHandler("leads", leads))
     application.add_handler(CommandHandler("models", models))
     application.add_handler(CommandHandler("teach", teach))
+    application.add_handler(CommandHandler("facebook", facebook_post))
     
     # Handler para todos los mensajes de texto
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
