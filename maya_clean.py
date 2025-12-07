@@ -311,6 +311,52 @@ app = Flask(__name__)
 
 @app.route('/')
 def health():
+    return jsonify({
+        "status": "Maya AI 24/7 Online", 
+        "telegram": bool(TELEGRAM_TOKEN),
+        "timestamp": datetime.now().isoformat(),
+        "uptime": "Always Active"
+    })
+
+@app.route('/health')
+def health_check():
+    return jsonify({"status": "ok", "service": "Maya AI Command Center"})
+
+@app.route('/keepalive')
+def keep_alive():
+    return jsonify({
+        "status": "alive", 
+        "message": "Maya working 24/7",
+        "timestamp": datetime.now().isoformat()
+    })
+
+def keep_service_alive():
+    """Mantener Maya activa 24/7 - evita que Render duerma el servicio"""
+    import time
+    
+    while True:
+        try:
+            # Self-ping cada 10 minutos
+            time.sleep(600)  # 10 minutos
+            # Ping interno para mantener activo
+            requests.get('http://127.0.0.1:5000/keepalive', timeout=5)
+            print("🔄 Keep-alive: Maya stays active 24/7")
+        except Exception as e:
+            print(f"⚠️ Keep-alive error: {e}, but Maya continues...")
+            time.sleep(60)  # Retry en 1 minuto si falla
+        
+def send_startup_notification():
+    """Notificar que Maya está online 24/7"""
+    if ADMIN_CHAT_ID:
+        try:
+            maya.send_message(ADMIN_CHAT_ID, 
+                "🚀 **Maya AI 24/7 ACTIVADA**\n\n✅ Servicio permanente online\n🔄 Keep-alive automático\n🧠 IA lista para trabajar\n💼 Sacred Rebirth Command Center\n\n💬 Háblame natural: 'Quiero una estrategia de marketing'")
+            print("✅ Startup notification sent")
+        except Exception as e:
+            print(f"⚠️ Notification failed: {e}")
+
+@app.route('/')
+def health():
     return jsonify({"status": "Maya Online", "telegram": bool(TELEGRAM_TOKEN)})
 
 def polling():
@@ -354,24 +400,31 @@ def main():
         print("❌ No token")
         return
     
-    print("🚀 Maya Starting...")
+    print("🚀 Maya Starting 24/7 Service...")
     print(f"Token: {TELEGRAM_TOKEN[:10]}...")
     print(f"Admin: {ADMIN_CHAT_ID}")
-    print("🔧 Starting without admin check...")
+    print("⚡ Activating permanent service...")
     
+    # Flask en thread permanente
     def run_flask():
         port = int(os.environ.get('PORT', 5000))
-        app.run(host='0.0.0.0', port=port, debug=False)
+        app.run(host='0.0.0.0', port=port, debug=False, threaded=True)
     
-    threading.Thread(target=run_flask, daemon=True).start()
+    flask_thread = threading.Thread(target=run_flask, daemon=True)
+    flask_thread.start()
     
-    if ADMIN_CHAT_ID:
-        maya.send_message(ADMIN_CHAT_ID, "🚀 Maya Online! Envía 'report' para empezar.")
-        print("✅ Startup message sent")
-    else:
-        print("⚠️ No admin ID - Maya will work but only respond to configured admin")
+    # Keep-alive en thread separado para 24/7
+    keepalive_thread = threading.Thread(target=keep_service_alive, daemon=True)
+    keepalive_thread.start()
     
-    print("🤖 Starting polling...")
+    # Notificación de inicio
+    send_startup_notification()
+    
+    print("✅ Maya 24/7 configured!")
+    print("🔄 Keep-alive activated")
+    print("🤖 Starting permanent polling...")
+    
+    # Polling permanente - nunca se detiene
     polling()
 
 if __name__ == '__main__':
