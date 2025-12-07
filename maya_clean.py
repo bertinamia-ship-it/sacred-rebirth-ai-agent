@@ -147,115 +147,164 @@ For social media marketing of ayahuasca/plant medicine retreat."""
 https://sacred-rebirth.com/appointment.html"""
 
     def process_message(self, text):
-        cmd = text.lower().strip()
-        if cmd in ['/start', 'start']:
-            return "🚀 **MAYA AI ONLINE!**\n\n🤖 Inteligencia Artificial Activada\n🎨 Generador de imágenes DALL-E\n📘 Publicación automática Facebook\n📊 Analytics en tiempo real\n\nComandos: report, content, imagen [tema], facebook [tipo], post"
+        """Procesar mensajes con inteligencia artificial natural"""
+        message = text.lower().strip()
         
-        elif cmd in ['report', 'reporte']:
-            return self.get_report()
+        # Respuestas inteligentes basadas en intención
+        if any(word in message for word in ['/start', 'start', 'hola', 'hi', 'hello']):
+            return "🚀 **¡Hola! Soy Maya, tu asistente AI para Sacred Rebirth!**\n\n🧠 Puedo ayudarte con:\n• Estrategias de marketing\n• Generar contenido llamativo\n• Crear imágenes con IA\n• Publicar en Facebook automáticamente\n• Reportes de negocio\n• Análisis de pipeline\n\n💬 **Háblame natural:** 'Quiero una publicación para obtener discovery calls' o 'Dame el reporte del negocio'"
         
-        elif cmd in ['content', 'contenido']:
-            prompt = """Crea un post para Instagram sobre Sacred Rebirth, un retiro de medicina ancestral en Valle de Bravo, México.
+        # Generar contenido llamativo para discovery calls
+        elif any(word in message for word in ['publicacion', 'post', 'contenido']) and any(word in message for word in ['discovery', 'llamadas', 'calls', 'llamativo']):
+            prompt = """Crea un post súper llamativo para redes sociales que genere discovery calls para Sacred Rebirth.
 
-Detalles:
-- Fecha: Agosto 11, 2025
-- Ubicación: Valle de Bravo
-- Capacidad: 8 espacios exclusivos  
-- Precio: $3,500 USD
-- Incluye: Ayahuasca, Temazcal, Cacao ceremonial
+Objetivo: Conseguir llamadas de descubrimiento para retiro ayahuasca
+Audiencia: Personas de alto ingreso, 35-55 años, buscando transformación espiritual
+Dolor/Problema: Vacío existencial, estrés, falta de propósito, trauma sin sanar
+Solución: Retiro Sacred Rebirth con medicina ancestral
 
-Estilo: Espiritual, auténtico, llamativo
-Audiencia: Personas de alto ingreso buscando transformación
-Incluir: Call to action, emojis, hashtags
-Longitud: 150-200 palabras"""
+Incluir:
+- Hook emocional poderoso
+- Beneficios transformacionales específicos
+- Escasez (solo 8 espacios)
+- Call to action para discovery call
+- Emojis llamativos
+- Sensación de urgencia
 
-            return f"✨ **GENERANDO CONTENIDO CON IA...**\n\n{self.generate_ai_content(prompt)}\n\n🔗 https://sacred-rebirth.com/appointment.html\n\n📱 ¡Listo para Instagram!"
+Estilo: Auténtico, espiritual pero accesible, premium"""
+
+            ai_response = self.generate_ai_content(prompt)
+            return f"✨ **PUBLICACIÓN LLAMATIVA GENERADA CON IA**\n\n{ai_response}\n\n🔗 https://sacred-rebirth.com/appointment.html\n\n💡 ¿Quieres que la publique automáticamente en Facebook? Solo dime 'sí publícala'"
         
-        elif cmd.startswith('imagen '):
-            tema = cmd.replace('imagen ', '')
+        # Reportes de negocio inteligentes
+        elif any(word in message for word in ['reporte', 'report', 'como', 'está', 'negocio', 'métricas']):
+            prompt = f"""Genera un reporte empresarial detallado para Sacred Rebirth basado en estos datos:
+
+NEGOCIO: Sacred Rebirth - Retiro medicina ancestral
+FECHA OBJETIVO: Agosto 11, 2025 (retiro)
+UBICACIÓN: Valle de Bravo, México
+CAPACIDAD: 8 espacios exclusivos
+PRECIO: $3,500 USD por persona
+REVENUE OBJETIVO: $28,000 USD
+
+FECHA ACTUAL: {datetime.now().strftime('%d de %B, %Y')}
+DÍAS RESTANTES: {(datetime(2025, 8, 11) - datetime.now()).days} días
+
+Incluir:
+1. Status actual del retiro
+2. Pipeline de ventas (estimado)
+3. Métricas de marketing
+4. Acciones prioritarias HOY
+5. Proyección de ingresos
+6. Recomendaciones estratégicas
+
+Estilo: Profesional, datos específicos, actionable"""
+
+            ai_response = self.generate_ai_content(prompt)
+            return f"📊 **REPORTE EMPRESARIAL IA**\n\n{ai_response}"
+        
+        # Estrategia de marketing
+        elif any(word in message for word in ['estrategia', 'marketing', 'plan', 'cómo', 'llenar', 'vender']):
+            prompt = """Crea una estrategia de marketing completa para Sacred Rebirth retiro ayahuasca.
+
+OBJETIVO: Llenar 8 espacios a $3,500 USD cada uno = $28,000 revenue
+TIEMPO: Hasta Agosto 11, 2025
+AUDIENCIA: Profesionales alto ingreso, 35-55 años, transformación espiritual
+
+Incluir:
+1. FUNNEL DE VENTAS específico
+2. CONTENIDO por plataforma (Instagram, Facebook)
+3. ESTRATEGIA DE PRECIOS y urgencia
+4. CALENDARIO de acciones semanales
+5. MÉTRICAS a trackear
+6. TÁCTICAS de conversión
+7. SEGUIMIENTO de leads
+
+Debe ser específico, implementable, con timelines claros"""
+
+            ai_response = self.generate_ai_content(prompt)
+            return f"🎯 **ESTRATEGIA MARKETING IA**\n\n{ai_response}\n\n💡 ¿Quieres que genere contenido específico para alguna táctica?"
+        
+        # Generar imágenes con descripción natural
+        elif any(word in message for word in ['imagen', 'foto', 'visual', 'crear', 'generar']) and any(word in message for word in ['ceremonia', 'ayahuasca', 'retiro', 'valle', 'transformacion']):
+            # Extraer el tema
+            if 'ceremonia' in message or 'ayahuasca' in message:
+                tema = "ceremonia ayahuasca sagrada"
+            elif 'valle' in message or 'paisaje' in message:
+                tema = "paisaje Valle de Bravo retiro"
+            elif 'transformacion' in message:
+                tema = "transformación espiritual"
+            else:
+                tema = "retiro medicina ancestral"
+            
             return self.generate_image(tema)
         
-        elif cmd.startswith('facebook '):
-            tipo = cmd.replace('facebook ', '')
-            prompt = f"""Crea un post profesional para Facebook sobre Sacred Rebirth retiro de medicina ancestral.
+        # Publicación en Facebook
+        elif any(word in message for word in ['facebook', 'publicar', 'post']) or 'sí publícala' in message:
+            fb_content = """🌿 ¿Sientes que algo falta en tu vida?
 
-Tipo de post: {tipo}
-Negocio: Sacred Rebirth
-Evento: Retiro ayahuasca Agosto 11, 2025
-Ubicación: Valle de Bravo, México
-Audiencia: Adultos alto ingreso, transformación espiritual
+A pesar del éxito profesional, muchos experimentamos un vacío profundo... una desconexión de nuestro verdadero propósito.
 
-Estilo Facebook: Más texto, educativo, profesional
-Call to action: Reservar llamada discovery
-URL: https://sacred-rebirth.com/appointment.html"""
+Si resonas con esto, Sacred Rebirth puede ser tu respuesta.
 
-            ai_content = self.generate_ai_content(prompt)
-            return f"📘 **POST FACEBOOK GENERADO CON IA**\n\n{ai_content}\n\n💡 Envía 'post' para publicar automáticamente en Facebook"
-        
-        elif cmd in ['post', 'publicar', 'sí', 'si', 'yes']:
-            # Generar contenido para publicar
-            fb_content = """🌿 Sacred Rebirth - Transformación Profunda Esperándote
+✨ Nuestro retiro de medicina ancestral en Valle de Bravo ofrece:
+🔮 Ceremonias de ayahuasca con facilitadores experimentados
+🏔️ Temazcal de purificación en la naturaleza
+🍫 Cacao ceremonial para abrir el corazón
 
-¿Sientes el llamado hacia una sanación más profunda? 
-
-Nuestro retiro de medicina ancestral en Valle de Bravo te ofrece la oportunidad de reconectar con tu esencia a través de ceremonias sagradas de ayahuasca, temazcal y cacao ceremonial.
-
-✨ Próximo Retiro: Agosto 11, 2025
-📍 Valle de Bravo, México  
-👥 Solo 8 espacios exclusivos
+📅 Próximo retiro: Agosto 11, 2025
+👥 Solo 8 espacios (exclusividad garantizada)
 💎 Inversión: $3,500 USD
 
-Un viaje guiado por facilitadores experimentados en un entorno seguro y sagrado.
+No es solo un retiro... es el inicio de tu verdadera transformación.
 
-🔗 Reserva tu llamada de descubrimiento:
+¿Listo para reconectar con tu esencia?
+
+🔗 Agenda tu llamada de descubrimiento (sin compromiso):
 https://sacred-rebirth.com/appointment.html
 
-#SacredRebirth #Medicina #Ancestral #Ayahuasca #Transformación"""
+#TransformaciónEspiritual #MedicinaAncestral #SacredRebirth"""
 
             return self.post_to_facebook(fb_content)
         
-        elif cmd in ['urgent', 'urgente']:
-            return """🚨 **URGENTE HOY - IA ACTIVADA**
+        # Pipeline de ventas
+        elif any(word in message for word in ['ventas', 'pipeline', 'leads', 'conversiones', 'clientes']):
+            prompt = """Analiza el pipeline de ventas para Sacred Rebirth como experto en marketing.
 
-⚡ **PRIORIDADES AUTOMÁTICAS**
-1. 📞 Discovery call 2:00 PM  
-2. 🎨 Generar imagen IA para post
-3. 📱 Contenido Instagram con IA
-4. 📘 Post Facebook automático
-5. 📊 Analytics tiempo real
+PRODUCTO: Retiro ayahuasca $3,500 USD
+OBJETIVO: 8 espacios = $28,000 revenue
+FECHA LÍMITE: Agosto 11, 2025
 
-🤖 **IA TRABAJANDO EN:**
-• Content generation
-• Image creation  
-• Facebook posting
-• Lead tracking
+Proporciona:
+1. ANÁLISIS del embudo de ventas actual
+2. MÉTRICAS de conversión esperadas
+3. STATUS de leads por temperatura
+4. ACCIONES específicas para cada segmento
+5. PROYECCIÓN de ventas
+6. ESTRATEGIAS de cierre
+7. FOLLOW-UP automatizado
 
-💰 Revenue objetivo: $28,000 USD"""
+Incluye números específicos y cronograma de acciones"""
+
+            ai_response = self.generate_ai_content(prompt)
+            return f"💰 **ANÁLISIS PIPELINE IA**\n\n{ai_response}"
         
-        elif cmd in ['pipeline', 'ventas']:
-            return """💰 **PIPELINE VENTAS - IA ANALYTICS**
-
-🎯 **OBJETIVO: $28,000 USD**
-8 espacios x $3,500 = SOLD OUT
-
-📊 **STATUS IA**
-🔥 Leads Calientes: 3 (IA scoring: 85%)
-🌡️ Leads Tibios: 8 (IA nurturing activo)
-❄️ Leads Fríos: 150+ (IA segmentation)
-
-🤖 **IA TRABAJANDO EN:**
-1. Predictive lead scoring
-2. Automated content creation  
-3. Optimal posting times
-4. Conversion optimization
-
-🚀 **PRÓXIMAS ACCIONES IA**
-• Visual content campaign
-• Personalized outreach
-• Facebook ads optimization"""
-        
+        # Respuesta general inteligente
         else:
-            return f"🤖 **Maya AI:** '{text}'\n\n🧠 **COMANDOS INTELIGENTES:**\n• content - Generar post con IA\n• imagen [tema] - Crear imagen DALL-E\n• facebook [tipo] - Post Facebook IA\n• post - Publicar automáticamente\n• report - Analytics tiempo real\n• urgent - Tareas IA\n• pipeline - Ventas predictivas\n\n💡 **Ejemplo:** 'imagen ceremonia ayahuasca'"
+            prompt = f"""El usuario de Sacred Rebirth pregunta: "{text}"
+
+Responde como Maya, experta en marketing para retiros espirituales y medicina ancestral.
+
+CONTEXTO:
+- Sacred Rebirth: Retiro ayahuasca en Valle de Bravo
+- Fecha: Agosto 11, 2025
+- 8 espacios a $3,500 USD
+- Audiencia: Alto ingreso, transformación espiritual
+
+Responde de manera útil, específica y actionable. Si no es claro, pregunta qué necesita específicamente."""
+
+            ai_response = self.generate_ai_content(prompt)
+            return f"🤖 **Maya IA:**\n\n{ai_response}\n\n💡 **También puedo:**\n• Generar contenido llamativo\n• Crear estrategias específicas\n• Hacer análisis de negocio\n• Generar imágenes con IA\n• Publicar automáticamente"
 
 maya = Maya()
 app = Flask(__name__)
