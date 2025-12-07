@@ -46,9 +46,12 @@ class SmartMaya:
         # Updated retreat information from website
         self.retreat_info = {
             "name": "Sacred Plant Medicine Retreat",
-            "dates": "January 11-18, 2025",
+            "dates": "August 11, 2025",  # Corrected date
             "duration": "7 nights, 8 days",
             "location": "Valle de Bravo, Mexico",
+            "capacity": "8 people maximum",  # Exclusive small group
+            "target_market": "High-income spiritual seekers",
+            "campaign_cycle": "3 months (quarterly retreats)",
             "ceremonies": "4 Sacred ayahuasca ceremonies",
             "daily_activities": "Daily cacao ceremonies, Temazcal (sweat lodge), Breathwork sessions, Integration circles, Yoga & meditation",
             "medicines": "Rapé & sananga medicines",
@@ -185,11 +188,13 @@ I'm Maya, your intelligent facilitator for Sacred Rebirth.
 • Provide personalized guidance
 
 **📊 Professional Commands:**
-• `/campaign` - Complete marketing strategy
+• `/campaign` - Complete marketing strategy  
+• `/premium` - Luxury campaign (high-income audience)
+• `/daily` - Complete automation package today
 • `/report` - Business analytics & forecasts
 • `/social [day]` - Daily content creation
 • `/email` - Email campaign sequence
-• `/costs` - Budget tracking & optimization
+• `/costs` - Complete operation cost analysis
 
 💫 Free discovery call to discuss your journey:
 {maya.retreat_info['booking_url']}
@@ -399,36 +404,150 @@ Always include: {maya.retreat_info['booking_url']}"""},
         await update.message.reply_text(f"❌ Error generating emails: {str(e)}")
 
 async def cost_tracker(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Track API usage and costs"""
+    """Track API usage and costs for complete operation"""
     await update.message.reply_text(f"""
-💰 **SMART MAYA COST TRACKING**
+💰 **COMPLETE MARKETING AUTOMATION COSTS**
 
-**Current Setup:**
-🔸 Model: gpt-4o-mini (most cost-effective)
-🔸 Budget: $20 USD allocated
-🔸 Token limits optimized for efficiency
+**🎯 YOUR OPERATION REQUIREMENTS:**
+• Daily social posts (Instagram/Facebook) 
+• Email campaigns & responses
+• WhatsApp marketing messages
+• Facebook message responses
+• Content creation (premium quality)
+• 3-month campaign cycles
+• Target: 8 high-income clients per retreat
 
-**Estimated Costs per Action:**
-• Normal conversation: ~$0.002-0.005
-• Campaign generation: ~$0.01-0.02  
-• Report creation: ~$0.008-0.015
-• Social content: ~$0.006-0.012
-• Email campaign: ~$0.010-0.020
+**📊 ESTIMATED MONTHLY COSTS (USD):**
 
-**Budget Optimization:**
-✅ Using shortest effective prompts
-✅ Smart token limits (250-800 max)
-✅ Fallback to basic responses when needed
-✅ Efficient model selection
+**DAILY OPERATIONS:**
+🔸 Daily Instagram post: $0.015 x 30 = $0.45
+🔸 Daily Facebook post: $0.015 x 30 = $0.45  
+🔸 Daily WhatsApp campaigns: $0.012 x 30 = $0.36
+🔸 Social media responses: $0.008 x 60 = $0.48
+🔸 Email responses: $0.010 x 40 = $0.40
 
-**Estimated Usage with $20:**
-🎯 ~1000-4000 conversations
-🎯 ~100-200 campaigns  
-🎯 ~150-250 reports
-🎯 ~200-300 content pieces
+**WEEKLY OPERATIONS:**
+🔸 Email campaigns (2/week): $0.025 x 8 = $0.20
+🔸 Advanced content creation: $0.030 x 7 = $0.21
+🔸 Analytics reports: $0.020 x 4 = $0.08
 
-Maya is optimized for professional results within budget! 🌿✨
+**MONTHLY OPERATIONS:**
+🔸 Complete campaign strategy: $0.050 x 4 = $0.20
+🔸 Audience analysis: $0.040 x 2 = $0.08
+🔸 Premium content calendar: $0.035 x 4 = $0.14
+
+**📈 TOTAL MONTHLY COST: ~$3.05 USD**
+**📈 3-MONTH CAMPAIGN COST: ~$9.15 USD** 
+**📈 ANNUAL COST (4 retreats): ~$36.60 USD**
+
+**🎯 COST PER BOOKING GOAL:**
+• Target: 8 clients per retreat
+• Cost per client acquired: ~$1.14 USD
+• Cost per retreat campaign: ~$9.15 USD
+
+**💡 OPTIMIZATION RECOMMENDATIONS:**
+✅ Use batch processing for efficiency
+✅ Template-based responses where possible  
+✅ Smart caching for common questions
+✅ Premium content focus (high-income audience)
+
+**🚀 ROI ANALYSIS:**
+If retreat price >$1000/person:
+• Marketing cost: $9.15 per retreat
+• Revenue potential: $8,000+ per retreat  
+• ROI: 87,000%+ (extremely profitable)
+
+Your $20 budget covers 2+ complete retreat cycles! 🌿✨
 """)
+
+async def premium_campaign(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Generate premium campaign for high-income audience"""
+    if not maya.openai_client:
+        await update.message.reply_text("🚨 AI features require OpenAI API key.")
+        return
+    
+    await update.message.reply_text("💎 Generating PREMIUM campaign for high-income audience...")
+    
+    try:
+        response = maya.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"""You are a luxury marketing expert for Sacred Rebirth exclusive retreats.
+
+TARGET: High-income individuals ($100k+ annual) seeking premium spiritual transformation
+RETREAT: {maya.retreat_info['name']} | {maya.retreat_info['dates']} | ONLY {maya.retreat_info['capacity']}
+
+Create PREMIUM 3-MONTH marketing strategy:
+
+1. LUXURY POSITIONING strategy
+2. EXCLUSIVE content themes (daily posts)
+3. HIGH-VALUE email sequences  
+4. PREMIUM WhatsApp campaigns
+5. VIP Facebook messaging approach
+6. SCARCITY & EXCLUSIVITY tactics
+7. AFFLUENT audience targeting
+
+Focus: Transformation, exclusivity, premium experience, limited availability
+Tone: Sophisticated, spiritual, high-value, exclusive
+Always include: {maya.retreat_info['booking_url']}"""},
+                {"role": "user", "content": "Generate complete premium marketing strategy for affluent spiritual seekers"}
+            ],
+            max_tokens=900,  # Larger for comprehensive strategy
+            temperature=0.6
+        )
+        
+        campaign = response.choices[0].message.content
+        
+        # Send in chunks
+        chunks = [campaign[i:i+4000] for i in range(0, len(campaign), 4000)]
+        
+        for i, chunk in enumerate(chunks):
+            header = "💎 **PREMIUM MARKETING STRATEGY**\n\n" if i == 0 else f"💎 **Strategy (Part {i+1})**\n\n"
+            await update.message.reply_text(f"{header}{chunk}")
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error generating premium campaign: {str(e)}")
+
+async def daily_automation(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Generate complete daily automation package"""
+    if not maya.openai_client:
+        await update.message.reply_text("🚨 AI features require OpenAI API key.")
+        return
+    
+    await update.message.reply_text("🤖 Creating complete daily automation package...")
+    
+    try:
+        today = datetime.now().strftime("%A, %B %d")
+        days_to_retreat = (datetime(2025, 8, 11) - datetime.now()).days
+        
+        response = maya.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"""Create complete daily automation for Sacred Rebirth.
+Today: {today} | Days to retreat: {days_to_retreat} | Target: affluent spiritual seekers
+
+Generate TODAY'S complete package:
+1. INSTAGRAM POST (caption + premium hashtags)
+2. FACEBOOK POST (longer, sophisticated)
+3. WHATSAPP MESSAGE (for leads list)
+4. EMAIL TEMPLATE (for inquiries)
+5. FACEBOOK MESSENGER AUTO-RESPONSE
+
+Themes: Exclusivity, transformation, limited spots, premium experience
+Audience: High-income, spiritual, seeking deep healing
+Always include: {maya.retreat_info['booking_url']}
+Mention: Only {maya.retreat_info['capacity']} spots available"""},
+                {"role": "user", "content": f"Generate complete daily automation package for {today}"}
+            ],
+            max_tokens=700,
+            temperature=0.7
+        )
+        
+        automation = response.choices[0].message.content
+        await update.message.reply_text(f"🤖 **DAILY AUTOMATION PACKAGE**\n\n{automation}")
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error creating automation: {str(e)}")
 
 def main():
     """Main function"""
@@ -444,13 +563,15 @@ def main():
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("campaign", generate_campaign))
+    app.add_handler(CommandHandler("premium", premium_campaign))  # New premium campaign
+    app.add_handler(CommandHandler("daily", daily_automation))    # New daily automation
     app.add_handler(CommandHandler("report", generate_report))
     app.add_handler(CommandHandler("social", create_social_content))
     app.add_handler(CommandHandler("email", email_campaign))
     app.add_handler(CommandHandler("costs", cost_tracker))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    print("✅ Professional Smart Maya ready! Full business automation operational!")
+    print("✅ Professional Smart Maya ready! Complete luxury automation operational!")
     app.run_polling()
 
 if __name__ == '__main__':
