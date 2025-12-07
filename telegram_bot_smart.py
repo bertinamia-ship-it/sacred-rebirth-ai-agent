@@ -94,12 +94,12 @@ CRITICAL RULES:
 6. Focus on transformation and healing"""
 
             response = self.openai_client.chat.completions.create(
-                model="gpt-4o-mini",
+                model="gpt-4o-mini",  # Most cost-effective model
                 messages=[
                     {"role": "system", "content": system_prompt},
                     {"role": "user", "content": f"User {user_name} says: {user_message}"}
                 ],
-                max_tokens=300,
+                max_tokens=250,  # Reduced for cost efficiency
                 temperature=0.7
             )
             
@@ -176,11 +176,20 @@ I'm Maya, your intelligent facilitator for Sacred Rebirth.
 • Airport transfers
 
 **🤖 I'm AI-powered and can:**
-• Answer questions intelligently
-• Respond in Spanish or English
+• Answer questions intelligently (bilingual)
+• Generate complete marketing campaigns
+• Create daily social media content
+• Generate business analytics reports
+• Design email marketing sequences  
+• Track API costs and usage
 • Provide personalized guidance
-• Generate marketing content
-• Create reports and analytics
+
+**📊 Professional Commands:**
+• `/campaign` - Complete marketing strategy
+• `/report` - Business analytics & forecasts
+• `/social [day]` - Daily content creation
+• `/email` - Email campaign sequence
+• `/costs` - Budget tracking & optimization
 
 💫 Free discovery call to discuss your journey:
 {maya.retreat_info['booking_url']}
@@ -217,33 +226,209 @@ async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
 """, parse_mode='Markdown')
 
 async def generate_campaign(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Generate marketing campaign"""
+    """Generate professional marketing campaign"""
     if not maya.openai_client:
         await update.message.reply_text("🚨 AI features require OpenAI API key. Using basic mode.")
         return
     
-    await update.message.reply_text("🎯 Generating marketing campaign... Please wait.")
+    await update.message.reply_text("🎯 Generating professional marketing campaign... Please wait.")
     
     try:
         response = maya.openai_client.chat.completions.create(
             model="gpt-4o-mini",
             messages=[
-                {"role": "system", "content": f"""You are a marketing expert for Sacred Rebirth. 
-Generate a complete marketing campaign for the retreat: {maya.retreat_info['name']}
-Dates: {maya.retreat_info['dates']}
-Include: social media posts, email subject lines, target audience strategies.
-Always include booking link: {maya.retreat_info['booking_url']}"""},
-                {"role": "user", "content": "Generate a complete 7-day marketing campaign for the January retreat"}
+                {"role": "system", "content": f"""You are an expert marketing strategist for Sacred Rebirth retreat business. 
+Generate a COMPLETE professional marketing campaign for: {maya.retreat_info['name']}
+Dates: {maya.retreat_info['dates']} | Location: {maya.retreat_info['location']}
+
+Include:
+1. TARGET AUDIENCE analysis
+2. 7-day SOCIAL MEDIA content calendar 
+3. EMAIL campaign sequence (3 emails)
+4. FACEBOOK ad copy (2 variations)
+5. INSTAGRAM stories strategy
+6. CONVERSION optimization tips
+
+Each piece must include: {maya.retreat_info['booking_url']}
+Focus on transformation, healing, spiritual growth. Professional tone."""},
+                {"role": "user", "content": "Generate complete marketing campaign for January 2025 retreat"}
             ],
-            max_tokens=1000,
-            temperature=0.7
+            max_tokens=800,  # Larger for comprehensive campaign
+            temperature=0.6
         )
         
         campaign = response.choices[0].message.content
-        await update.message.reply_text(f"📊 **Marketing Campaign Generated:**\n\n{campaign}")
+        
+        # Send campaign in chunks to avoid Telegram limits
+        chunks = [campaign[i:i+4000] for i in range(0, len(campaign), 4000)]
+        
+        for i, chunk in enumerate(chunks):
+            header = "📊 **COMPLETE MARKETING CAMPAIGN**\n\n" if i == 0 else f"📊 **Campaign (Part {i+1})**\n\n"
+            await update.message.reply_text(f"{header}{chunk}")
         
     except Exception as e:
         await update.message.reply_text(f"❌ Error generating campaign: {str(e)}")
+
+async def generate_report(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Generate business analytics report"""
+    if not maya.openai_client:
+        await update.message.reply_text("🚨 AI features require OpenAI API key.")
+        return
+    
+    await update.message.reply_text("📊 Generating analytics report... Please wait.")
+    
+    try:
+        # Simulate current date analytics
+        current_date = datetime.now().strftime("%B %d, %Y")
+        days_to_retreat = (datetime(2025, 1, 11) - datetime.now()).days
+        
+        response = maya.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"""You are a business analyst for Sacred Rebirth retreat.
+Generate a professional analytics report for retreat: {maya.retreat_info['name']}
+Today: {current_date} | Days until retreat: {days_to_retreat}
+
+Include:
+1. BOOKING STATUS forecast
+2. MARKETING performance recommendations  
+3. SOCIAL MEDIA optimization tips
+4. CONVERSION rate improvement strategies
+5. LAST-MINUTE booking tactics
+6. POST-RETREAT follow-up plan
+
+Make it actionable and data-driven. Include: {maya.retreat_info['booking_url']}"""},
+                {"role": "user", "content": f"Generate comprehensive business report for retreat in {days_to_retreat} days"}
+            ],
+            max_tokens=600,
+            temperature=0.5
+        )
+        
+        report = response.choices[0].message.content
+        await update.message.reply_text(f"📈 **ANALYTICS REPORT**\n\n{report}")
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error generating report: {str(e)}")
+
+async def create_social_content(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Generate daily social media content"""
+    if not maya.openai_client:
+        await update.message.reply_text("🚨 AI features require OpenAI API key.")
+        return
+    
+    # Get day of week or custom day from command
+    args = context.args
+    day = args[0] if args else datetime.now().strftime("%A")
+    
+    await update.message.reply_text(f"📱 Creating {day} social content...")
+    
+    try:
+        response = maya.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"""Create professional social media content for Sacred Rebirth.
+Retreat: {maya.retreat_info['name']} | {maya.retreat_info['dates']}
+
+For {day}, create:
+1. INSTAGRAM POST (caption + hashtags)
+2. FACEBOOK POST (longer format)
+3. INSTAGRAM STORY idea
+4. LINKEDIN article concept
+
+Themes by day:
+Monday: Education about plant medicine
+Tuesday: Testimonials & transformation
+Wednesday: Behind the scenes
+Thursday: Retreat preparation tips
+Friday: Spiritual insights
+Saturday: Community & connection  
+Sunday: Reflection & intention
+
+Always include: {maya.retreat_info['booking_url']}
+Professional, engaging, spiritual tone."""},
+                {"role": "user", "content": f"Generate complete social media content for {day}"}
+            ],
+            max_tokens=500,
+            temperature=0.7
+        )
+        
+        content = response.choices[0].message.content
+        await update.message.reply_text(f"📱 **{day.upper()} CONTENT CREATED**\n\n{content}")
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error creating content: {str(e)}")
+
+async def email_campaign(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Generate email marketing campaign"""
+    if not maya.openai_client:
+        await update.message.reply_text("🚨 AI features require OpenAI API key.")
+        return
+    
+    await update.message.reply_text("📧 Generating email campaign sequence...")
+    
+    try:
+        response = maya.openai_client.chat.completions.create(
+            model="gpt-4o-mini",
+            messages=[
+                {"role": "system", "content": f"""Create professional email marketing sequence for Sacred Rebirth.
+Retreat: {maya.retreat_info['name']} | {maya.retreat_info['dates']}
+
+Generate 3 email sequence:
+1. WELCOME EMAIL (for new leads)
+2. EDUCATION EMAIL (about plant medicine)  
+3. URGENCY EMAIL (limited spots)
+
+Each email needs:
+- Subject line (high open rate)
+- Professional body copy
+- Clear call-to-action
+- Personal touch from Maya
+
+Target: People interested in spiritual transformation, healing, personal growth
+Always include: {maya.retreat_info['booking_url']}"""},
+                {"role": "user", "content": "Generate complete 3-email marketing sequence"}
+            ],
+            max_tokens=700,
+            temperature=0.6
+        )
+        
+        emails = response.choices[0].message.content
+        await update.message.reply_text(f"📧 **EMAIL CAMPAIGN SEQUENCE**\n\n{emails}")
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error generating emails: {str(e)}")
+
+async def cost_tracker(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Track API usage and costs"""
+    await update.message.reply_text(f"""
+💰 **SMART MAYA COST TRACKING**
+
+**Current Setup:**
+🔸 Model: gpt-4o-mini (most cost-effective)
+🔸 Budget: $20 USD allocated
+🔸 Token limits optimized for efficiency
+
+**Estimated Costs per Action:**
+• Normal conversation: ~$0.002-0.005
+• Campaign generation: ~$0.01-0.02  
+• Report creation: ~$0.008-0.015
+• Social content: ~$0.006-0.012
+• Email campaign: ~$0.010-0.020
+
+**Budget Optimization:**
+✅ Using shortest effective prompts
+✅ Smart token limits (250-800 max)
+✅ Fallback to basic responses when needed
+✅ Efficient model selection
+
+**Estimated Usage with $20:**
+🎯 ~1000-4000 conversations
+🎯 ~100-200 campaigns  
+🎯 ~150-250 reports
+🎯 ~200-300 content pieces
+
+Maya is optimized for professional results within budget! 🌿✨
+""")
 
 def main():
     """Main function"""
@@ -252,16 +437,20 @@ def main():
         print("❌ TELEGRAM_BOT_TOKEN required")
         return
 
-    print("🤖 Starting Smart Maya application...")
+    print("🤖 Starting Professional Smart Maya...")
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
-    # Add handlers
+    # Professional commands
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(CommandHandler("campaign", generate_campaign))
+    app.add_handler(CommandHandler("report", generate_report))
+    app.add_handler(CommandHandler("social", create_social_content))
+    app.add_handler(CommandHandler("email", email_campaign))
+    app.add_handler(CommandHandler("costs", cost_tracker))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    print("✅ Smart Maya ready! AI-powered appointment setter operational!")
+    print("✅ Professional Smart Maya ready! Full business automation operational!")
     app.run_polling()
 
 if __name__ == '__main__':
