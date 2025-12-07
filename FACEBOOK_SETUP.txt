@@ -1,0 +1,52 @@
+🔧 CONFIGURACIÓN WEBHOOK FACEBOOK - PASO A PASO
+
+PASO 1: OBTENER URL DE RAILWAY
+========================================
+1. Ve a: https://railway.app/dashboard
+2. Busca tu proyecto "Sacred Rebirth Agent"  
+3. En "Deployments" o "Settings", busca la URL
+4. Copia la URL (ej: https://tu-app.up.railway.app)
+
+PASO 2: FACEBOOK DEVELOPER CONSOLE
+========================================
+1. Ve a: https://developers.facebook.com/apps/
+2. Selecciona tu app "Sacred Rebirth Agent"
+3. En el menú lateral izquierdo, busca "Webhooks"
+4. Click en "Webhooks"
+
+PASO 3: CONFIGURAR WEBHOOK DE PÁGINA
+========================================
+1. En Webhooks, busca "Page" 
+2. Click "Subscribe to this object"
+3. Llenar formulario:
+   - Callback URL: https://tu-app.up.railway.app/webhook
+   - Verify Token: sacred_rebirth_webhook_2025
+4. Click "Verify and Save"
+
+PASO 4: SELECCIONAR EVENTOS
+========================================
+En "Subscription Fields", activar:
+☑️ messages
+☑️ messaging_postbacks (opcional)
+
+PASO 5: SUSCRIBIR TU PÁGINA
+========================================
+1. Scroll hacia abajo a "Page Subscriptions"
+2. Click "+ Subscribe to New Page"
+3. Seleccionar tu página de Facebook de Sacred Rebirth
+4. Activar "messages"
+
+VERIFICAR QUE FUNCIONA:
+========================================
+1. Ve a tu página de Facebook de Sacred Rebirth
+2. Envía un mensaje privado: "Hola"
+3. Maya debería responder automáticamente
+
+SOLUCIÓN DE PROBLEMAS:
+========================================
+- Si no responde: verifica que la URL del webhook sea correcta
+- Si error de verificación: confirma el verify token
+- Si Railway no funciona: el bot debe estar desplegado como "web" no solo "worker"
+
+TOKEN DE VERIFICACIÓN: sacred_rebirth_webhook_2025
+URL WEBHOOK: https://[tu-railway-url]/webhook
