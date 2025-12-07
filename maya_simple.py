@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
 Sacred Rebirth Telegram Bot - Maya Appointment Setter
-Version ultra-simplificada que funciona garantizado
+Ultra-simplified version that works guaranteed
 """
 import os
 from dotenv import load_dotenv
@@ -10,95 +10,95 @@ from telegram.ext import Application, CommandHandler, MessageHandler, filters, C
 
 load_dotenv()
 
-# Configuración básica
+# Basic configuration
 TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 AUTHORIZED_USERS = os.getenv('TELEGRAM_AUTHORIZED_USERS', '').split(',')
 
-print("🚀 Iniciando Sacred Rebirth Bot Ultra-Simple...")
-print(f"🔑 Bot Token: {'✅ OK' if TELEGRAM_BOT_TOKEN else '❌ FALTA'}")
+print("🚀 Starting Sacred Rebirth Bot Ultra-Simple...")
+print(f"🔑 Bot Token: {'✅ OK' if TELEGRAM_BOT_TOKEN else '❌ MISSING'}")
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Comando /start"""
+    """Command /start"""
     user = update.effective_user
     await update.message.reply_text(f"""
-🙏 ¡Hola {user.first_name}!
+🙏 Hello {user.first_name}!
 
-Soy Maya, facilitadora de Sacred Rebirth.
+I'm Maya, facilitator for Sacred Rebirth.
 
-**🌿 Retiro de Transformación**
-📅 11 de enero de 2025  
-📍 Valle de Bravo, México
-⏱️ 3 días, 2 noches
+**🌿 Transformation Retreat**
+📅 January 11th, 2025  
+📍 Valle de Bravo, Mexico
+⏱️ 3 days, 2 nights
 
-**✨ Incluye:**
-• Ayahuasca sagrada
-• Temazcal ceremonial  
-• Cacao ceremonial
-• Acompañamiento completo
+**✨ Includes:**
+• Sacred ayahuasca
+• Ceremonial temazcal  
+• Ceremonial cacao
+• Complete guidance
 
-💫 Discovery call gratuito:
+💫 Free discovery call:
 https://sacred-rebirth.com/appointment.html
 
-¿En qué puedo ayudarte? 🌿
+How can I help you? 🌿
 """)
 
 async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Maya responde como appointment setter"""
+    """Maya responds as appointment setter"""
     
     user_message = update.message.text.lower()
     user_name = update.effective_user.first_name
     
     print(f"💬 {user_name}: {update.message.text[:30]}...")
 
-    # Maya responde automáticamente
-    if 'hola' in user_message or 'hello' in user_message:
-        response = f"🌿 ¡Hola {user_name}! Soy Maya de Sacred Rebirth. ¿En qué puedo ayudarte sobre nuestros retiros? 💫 https://sacred-rebirth.com/appointment.html"
+    # Maya responds automatically
+    if 'hola' in user_message or 'hello' in user_message or 'hi' in user_message:
+        response = f"🌿 Hello {user_name}! I'm Maya from Sacred Rebirth. How can I help you with our retreats? 💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'donde' in user_message or 'ubicación' in user_message or 'where' in user_message:
-        response = "🏔️ Valle de Bravo, Estado de México. Un lugar sagrado en las montañas, perfecto para transformación profunda. 🌿💫 https://sacred-rebirth.com/appointment.html"
+    elif 'donde' in user_message or 'ubicación' in user_message or 'where' in user_message or 'location' in user_message:
+        response = "🏔️ Valle de Bravo, Estado de México. A sacred place in the mountains, perfect for deep transformation. 🌿💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'retiro' in user_message or 'retreat' in user_message or 'que es' in user_message:
-        response = "✨ Retiro de 3 días con ayahuasca sagrada, temazcal, cacao ceremonial. 11 enero 2025 en Valle de Bravo. 🌿💫 https://sacred-rebirth.com/appointment.html"
+    elif 'retiro' in user_message or 'retreat' in user_message or 'what is' in user_message or 'que es' in user_message:
+        response = "✨ 3-day retreat with sacred ayahuasca, temazcal, ceremonial cacao. January 11th 2025 in Valle de Bravo. 🌿💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'medicina' in user_message or 'ayahuasca' in user_message:
-        response = "🌿 Ayahuasca sagrada, temazcal ceremonial, cacao del corazón y rapé. Con facilitadores experimentados en ambiente seguro. 💫 https://sacred-rebirth.com/appointment.html"
+    elif 'medicina' in user_message or 'ayahuasca' in user_message or 'medicine' in user_message:
+        response = "🌿 Sacred ayahuasca, ceremonial temazcal, heart cacao and rapé. With experienced facilitators in safe environment. 💫 https://sacred-rebirth.com/appointment.html"
         
-    elif 'precio' in user_message or 'costo' in user_message or 'cost' in user_message:
-        response = "💫 Te invito a agendar tu discovery call gratuito para hablar sobre inversión y detalles. Conversación personalizada sin compromiso. 🌿 https://sacred-rebirth.com/appointment.html"
+    elif 'precio' in user_message or 'costo' in user_message or 'cost' in user_message or 'price' in user_message:
+        response = "💫 I invite you to schedule your free discovery call to discuss investment and details. Personalized conversation with no commitment. 🌿 https://sacred-rebirth.com/appointment.html"
         
     elif 'test' in user_message or 'prueba' in user_message:
-        response = "✅ ¡Maya funcionando! Bot activo, listo para appointment setting. Sacred Rebirth operativo. 🌿✨"
+        response = "✅ Maya working! Bot active, ready for appointment setting. Sacred Rebirth operational. 🌿✨"
         
     else:
-        response = f"🌿 Hola {user_name}, soy Maya de Sacred Rebirth. Pregúntame sobre ubicación, retiro, medicinas o fechas. 💫 https://sacred-rebirth.com/appointment.html"
+        response = f"🌿 Hello {user_name}, I'm Maya from Sacred Rebirth. Ask me about location, retreat, medicines or dates. 💫 https://sacred-rebirth.com/appointment.html"
 
     await update.message.reply_text(response)
 
 async def status(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Status del bot"""
+    """Bot status"""
     await update.message.reply_text("""✅ **Maya Status**
-🤖 Bot: Activo
+🤖 Bot: Active
 🌿 Appointment setter: OK
-📅 Retiro: 11 enero 2025
+📅 Retreat: January 11th 2025
 📍 Valle de Bravo
-💫 Sistema operativo""", parse_mode='Markdown')
+💫 System operational""", parse_mode='Markdown')
 
 def main():
-    """Función principal ultra-simple"""
+    """Ultra-simple main function"""
     
     if not TELEGRAM_BOT_TOKEN:
-        print("❌ TELEGRAM_BOT_TOKEN requerido")
+        print("❌ TELEGRAM_BOT_TOKEN required")
         return
 
-    print("🤖 Iniciando aplicación...")
+    print("🤖 Starting application...")
     app = Application.builder().token(TELEGRAM_BOT_TOKEN).build()
 
-    # Handlers mínimos
+    # Minimal handlers
     app.add_handler(CommandHandler("start", start))
     app.add_handler(CommandHandler("status", status))
     app.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
 
-    print("✅ Maya lista como appointment setter!")
+    print("✅ Maya ready as appointment setter!")
     app.run_polling()
 
 if __name__ == '__main__':
