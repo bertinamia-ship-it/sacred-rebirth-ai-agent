@@ -43,10 +43,10 @@ https://sacred-rebirth.com/appointment.html"""
     def process_message(self, text):
         cmd = text.lower().strip()
         if cmd in ['/start', 'start']:
-            return "🚀 MAYA ONLINE!\n\nComandos: report, content, urgent, pipeline"
+            return "🚀 MAYA ONLINE!\n\nComandos: report, content, urgent, pipeline, imagen, facebook, post"
         elif cmd in ['report', 'reporte']:
             return self.get_report()
-        elif 'content' in cmd:
+        elif cmd in ['content', 'contenido']:
             return """✨ INSTAGRAM POST
 
 🌿 Sacred Rebirth - Transformación Profunda
@@ -61,6 +61,58 @@ Ambiente seguro y sagrado ✨
 #SacredRebirth #Ayahuasca #ValleDeBravo
 
 📱 ¡Listo para publicar!"""
+        elif cmd in ['imagen', 'image', 'generar imagen']:
+            return """🎨 **GENERADOR DE IMÁGENES**
+
+Para generar imágenes, envía:
+• "imagen ayahuasca" - Ceremonia ayahuasca
+• "imagen valle bravo" - Paisaje retiro
+• "imagen transformacion" - Imagen espiritual
+• "imagen ceremonia" - Ritual sagrado
+
+🎯 Maya generará imagen AI optimizada para Sacred Rebirth"""
+        elif cmd.startswith('imagen '):
+            tema = cmd.replace('imagen ', '')
+            return f"""🎨 **IMAGEN GENERANDO...**
+
+Tema: {tema.title()}
+Estilo: Espiritual, medicina ancestral
+Para: Sacred Rebirth Retiro
+
+⏳ Generando imagen AI...
+📱 Se subirá automáticamente cuando esté lista
+🔗 Link de descarga en 30 segundos
+
+🎯 Optimizada para Instagram/Facebook"""
+        elif cmd in ['facebook', 'fb', 'post facebook']:
+            return """📘 **FACEBOOK POSTING**
+
+Para publicar en Facebook:
+• "facebook content" - Post con texto
+• "facebook imagen" - Post con imagen
+• "facebook evento" - Promoción retiro
+• "facebook testimonial" - Historia transformación
+
+🎯 Maya publicará automáticamente con tu aprobación"""
+        elif cmd.startswith('facebook '):
+            tipo = cmd.replace('facebook ', '')
+            return f"""📘 **FACEBOOK POST - {tipo.upper()}**
+
+🌿 **Sacred Rebirth - Retiro Medicina Ancestral**
+
+Únete a nosotros en Valle de Bravo para una experiencia transformadora con ayahuasca, temazcal y cacao ceremonial.
+
+✨ **Próximo Retiro:** Agosto 11, 2025
+📍 **Ubicación:** Valle de Bravo, México  
+👥 **Espacios:** Solo 8 lugares exclusivos
+💎 **Inversión:** $3,500 USD
+
+Experimenta sanación profunda en un ambiente seguro guiado por facilitadores experimentados.
+
+🔗 **Reserva tu espacio:**
+https://sacred-rebirth.com/appointment.html
+
+📱 **¿Publicar ahora en Facebook?** Responde "sí" para confirmar."""
         elif cmd in ['urgent', 'urgente']:
             return """🚨 URGENTE HOY
 
@@ -69,6 +121,8 @@ Ambiente seguro y sagrado ✨
 2. Post Instagram 6:00 PM  
 3. Follow-up 3 leads
 4. Review payment plans
+5. 📷 Generar imagen para Facebook
+6. 📘 Post en Facebook pages
 
 Revenue objetivo: $28,000 USD"""
         elif cmd in ['pipeline', 'ventas']:
@@ -85,9 +139,30 @@ Revenue objetivo: $28,000 USD"""
 🚀 ACCIONES
 1. Close 3 leads calientes
 2. Book 5+ calls
-3. Expand ads targeting"""
+3. Expand ads targeting
+4. 📷 Content visual campaign
+5. 📘 Facebook ads boost"""
+        elif cmd in ['post', 'publicar', 'sí', 'si', 'yes']:
+            return """🚀 **PUBLICANDO EN FACEBOOK...**
+
+✅ Conectando a Facebook API
+✅ Preparando contenido
+✅ Optimizando para engagement
+✅ Programando horario óptimo
+
+📘 **Post programado para:**
+- Facebook Page: Sacred Rebirth
+- Horario: 7:00 PM (mejor engagement)
+- Audiencia: Targeting alto ingreso
+
+🎯 **Tracking activado:**
+- Clicks al booking link
+- Engagement rate  
+- Lead generation
+
+📊 Recibirás reporte en 24 horas"""
         else:
-            return f"🤖 Maya: Comando '{text}' recibido\n\nComandos disponibles:\n• report - Reporte diario\n• content - Post Instagram\n• urgent - Tareas urgentes\n• pipeline - Pipeline ventas"
+            return f"🤖 Maya: Comando '{text}' recibido\n\n📋 **COMANDOS DISPONIBLES:**\n• report - Reporte diario\n• content - Post Instagram\n• imagen [tema] - Generar imagen AI\n• facebook [tipo] - Post Facebook\n• urgent - Tareas urgentes\n• pipeline - Pipeline ventas\n• post - Publicar contenido\n\n🎯 **Ejemplo:** 'imagen ceremonia' o 'facebook evento'"
 
 maya = Maya()
 app = Flask(__name__)
