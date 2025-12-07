@@ -1,1 +1,1 @@
-worker: python maya_enterprise.py
+worker: python maya_ultimate.py
