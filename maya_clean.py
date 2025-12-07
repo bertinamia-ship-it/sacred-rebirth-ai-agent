@@ -3,10 +3,10 @@ import os, requests, time, threading, json
 from datetime import datetime
 from flask import Flask, jsonify
 
-TELEGRAM_TOKEN = os.environ.get('TELEGRAM_BOT_TOKEN')
+TELEGRAM_TOKEN = os.environ.get('TELEGRAM_TOKEN')
 ADMIN_CHAT_ID = os.environ.get('ADMIN_CHAT_ID')
 OPENAI_API_KEY = os.environ.get('OPENAI_API_KEY')
-FACEBOOK_PAGE_TOKEN = os.environ.get('FACEBOOK_PAGE_ACCESS_TOKEN')
+FACEBOOK_ACCESS_TOKEN = os.environ.get('FACEBOOK_ACCESS_TOKEN')
 FACEBOOK_PAGE_ID = os.environ.get('FACEBOOK_PAGE_ID')
 
 class Maya:
@@ -95,7 +95,7 @@ For social media marketing of ayahuasca/plant medicine retreat."""
     
     def post_to_facebook(self, message, image_url=None):
         """Publicar realmente en Facebook"""
-        if not FACEBOOK_PAGE_TOKEN or not FACEBOOK_PAGE_ID:
+        if not FACEBOOK_ACCESS_TOKEN or not FACEBOOK_PAGE_ID:
             return "📘 Facebook API no configurada."
         
         try:
@@ -103,7 +103,7 @@ For social media marketing of ayahuasca/plant medicine retreat."""
             
             data = {
                 'message': message,
-                'access_token': FACEBOOK_PAGE_TOKEN
+                'access_token': FACEBOOK_ACCESS_TOKEN
             }
             
             if image_url:
