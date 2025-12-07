@@ -19,3 +19,6 @@ python-telegram-bot[all]>=21.0
 # WhatsApp Bot (via Twilio)
 flask>=3.0.0
 twilio>=8.0.0
+
+# Para logging y debugging
+loguru>=0.7.0

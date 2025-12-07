@@ -6,11 +6,16 @@ Permite interactuar con el agente de marketing a través de Telegram
 import os
 import requests
 import json
+from datetime import datetime
 from dotenv import load_dotenv
 from telegram import Update
 from telegram.ext import Application, CommandHandler, MessageHandler, filters, ContextTypes
 from src.crew import MarketingCrew
 from chat import ChatAgent
+from src.appointment_setter import AppointmentSetterAgent
+from src.image_generator import SacredRebirthImageGenerator
+from src.campaign_manager import MarketingCampaignManager
+from src.daily_content import DailyContentAutomation
 
 load_dotenv()
 
@@ -19,9 +24,10 @@ TELEGRAM_BOT_TOKEN = os.getenv('TELEGRAM_BOT_TOKEN')
 AUTHORIZED_USERS = os.getenv('TELEGRAM_AUTHORIZED_USERS', '').split(',')
 FACEBOOK_PAGE_ACCESS_TOKEN = os.getenv('FACEBOOK_PAGE_ACCESS_TOKEN')
 
-def post_to_facebook(message_text):
+def post_to_facebook(message_text, image_path=None):
     """
     Publica contenido en la página de Facebook de Sacred Rebirth
+    Incluye texto y opcionalmente una imagen
     """
     if not FACEBOOK_PAGE_ACCESS_TOKEN:
         return {"success": False, "error": "Facebook token not configured"}
@@ -30,21 +36,37 @@ def post_to_facebook(message_text):
         # URL de la Graph API para publicar en página
         url = f"https://graph.facebook.com/v18.0/me/feed"
         
-        # Datos del post
-        data = {
-            'message': message_text,
-            'access_token': FACEBOOK_PAGE_ACCESS_TOKEN
-        }
+        # Siempre añadir call to action al contenido
+        if "book your discovery call" not in message_text.lower():
+            message_text += "\n\n💫 Book your discovery call now: https://sacred-rebirth.com/appointment.html"
         
-        # Hacer la petición
-        response = requests.post(url, data=data)
+        if image_path and os.path.exists(image_path):
+            # Publicar con imagen
+            url = f"https://graph.facebook.com/v18.0/me/photos"
+            
+            with open(image_path, 'rb') as image_file:
+                files = {'source': image_file}
+                data = {
+                    'message': message_text,
+                    'access_token': FACEBOOK_PAGE_ACCESS_TOKEN
+                }
+                response = requests.post(url, data=data, files=files)
+        else:
+            # Publicar solo texto
+            data = {
+                'message': message_text,
+                'access_token': FACEBOOK_PAGE_ACCESS_TOKEN
+            }
+            response = requests.post(url, data=data)
+        
         result = response.json()
         
         if response.status_code == 200 and 'id' in result:
             return {
                 "success": True, 
                 "post_id": result['id'],
-                "message": "✅ Post publicado en Facebook exitosamente"
+                "message": "✅ Post publicado en Facebook exitosamente",
+                "has_image": image_path is not None
             }
         else:
             return {
@@ -55,12 +77,16 @@ def post_to_facebook(message_text):
     except Exception as e:
         return {"success": False, "error": f"Error de conexión: {str(e)}"}
 
-# Inicializar agente
+# Inicializar agentes
 print("🤖 Inicializando Marketing Crew para Telegram...")
 crew = MarketingCrew()
 chat_agent = ChatAgent()
 chat_agent.crew = crew
-print("✅ Bot de Telegram listo!")
+appointment_agent = AppointmentSetterAgent()
+image_generator = SacredRebirthImageGenerator()
+campaign_manager = MarketingCampaignManager()
+daily_content = DailyContentAutomation()
+print("✅ Bot de Telegram con sistemas completos listo!")
 
 
 async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
@@ -70,22 +96,29 @@ async def start(update: Update, context: ContextTypes.DEFAULT_TYPE):
     welcome_message = f"""
 🙏 ¡Hola {user.first_name}!
 
-Soy el asistente de marketing de Sacred Rebirth.
+Soy Maya, tu asistente completo de marketing para Sacred Rebirth.
 
-**Puedo ayudarte con:**
-• Crear posts para Instagram/Facebook
-• Publicar automáticamente en Facebook 📱
-• Generar campañas de email
-• Gestionar tu calendario de contenido
-• Analizar tus leads
-• Programar publicaciones
+**🚀 NUEVO: Sistema Completo de Marketing**
+• Generación automática de imágenes 🎨
+• Appointment setter inteligente 💬
+• Campañas completas para retiros 📊
+• Publicación automática en Facebook 📱
+• Calendario de contenido diario 📅
+• Guiones de video profesionales 🎬
+
+**RETIRO ESPECIAL: 11 de Enero 2025** 🌿
+• Ubicación: Valle de Bravo
+• Tema: "Nuevo Año, Nueva Vida"
+• Con ayahuasca, temazcal, cacao
 
 **Ejemplos de comandos:**
-• "Crea un post de Instagram sobre ayahuasca"
-• "Publica en Facebook: ¡Nuevo retiro disponible!"
-• "Muestra el calendario de esta semana"
-• "Envía email de bienvenida a nuevos leads"
-• "Programa 3 posts para mañana"
+• "Crea foto y promueva el retiro de enero"
+• "Genera campaña completa de marketing"
+• "¿Dónde está ubicado el retiro?"
+• "Sube contenido a Facebook sobre ayahuasca"
+• "/campaign" para estrategia completa
+
+💫 **TODO incluye automáticamente el booking link**
 
 Solo escríbeme naturalmente y yo entenderé 💬
 """
@@ -96,39 +129,56 @@ Solo escríbeme naturalmente y yo entenderé 💬
 async def help_command(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Comando /help - Ayuda"""
     help_text = """
-📚 **Guía Rápida**
+📚 **Guía Completa Sacred Rebirth Bot**
 
-**Comandos:**
+**🤖 COMANDOS BÁSICOS:**
 /start - Bienvenida
 /help - Esta ayuda
 /status - Estado del sistema
 /stats - Ver uso y costos 💰
 /models - Ver modelos de IA disponibles
-/calendar - Calendario sugerido
 /teach - Enseñarme algo nuevo
-/facebook - Publicar en Facebook 📱
 
-**Crear Contenido:**
-• "Genera un post sobre ayahuasca" (⚡ básico)
-• "Crea un **anuncio PROFESIONAL**" (✨ premium)
-• "Dame una **estrategia completa**" (🔥 ultra)
+**📱 PUBLICACIÓN Y CONTENIDO:**
+/facebook [contenido] - Publicar en Facebook
+/image [tema] - Generar imagen
+/daily [día] - Contenido diario automático
+/weekly - Calendario semanal completo
+• "Crea un foto y promueva el retiro"
+• "Sube contenido a Facebook sobre ayahuasca"
 
-**Publicar en Facebook:**
-• "/facebook [contenido]"
-• "Publica en Facebook: [contenido]"
-• "Crea un post y súbelo a Facebook"
+**🚀 MARKETING AVANZADO:**
+/campaign - Campaña completa enero 11
+/audience - Estrategia de captación
+/content [días] - Calendario de contenido
+/video - Guión de video mensual
 
-**Investigación:**
-• "Dónde puedo promocionar mi retiro"
-• "Encuentra grupos de Facebook"
-• "Qué hashtags usar"
+**🎯 APPOINTMENT SETTER:**
+• Pregunta sobre ubicación, medicina, retiros
+• Automáticamente dirige a discovery call
+• Responde como Maya, facilitadora experta
 
-**Enseñarme:**
-• /teach El próximo retiro es el 15 de enero
-• "Aprende: Me gusta un tono espiritual"
-• "Recuerda: El precio es $8000 MXN"
+**📅 CONTENIDO DIARIO AUTOMÁTICO:**
+• Lunes: Educación sobre Ayahuasca
+• Martes: Testimonios y transformaciones
+• Miércoles: Behind the scenes
+• Jueves: Preparación para retiro
+• Viernes: Inspiración y reflexiones
+• Sábado: Q&A y mitos vs realidad
+• Domingo: Reflexiones espirituales
 
-💡 **TIP:** Di "profesional" o "llamativo" para usar IA premium automáticamente
+**💬 EJEMPLOS DE USO:**
+• "¿Dónde está el retiro?" → Respuesta + discovery call
+• "Crea foto para retiro enero 11" → Imagen + Facebook
+• "Genera campaña completa" → Estudio + calendario + estrategia
+• "¿Cuánto cuesta?" → Info + discovery call booking
+• "/daily Tuesday" → Contenido + imagen para martes
+
+💫 **TODO incluye automáticamente: Book your discovery call now!**
+
+🎨 Temas de imagen: retiro, medicina, transformación, location
+📅 Calendario: hasta 60 días de contenido diario
+🤖 Sistema inteligente ahorra 83% en costos de IA
 
 ¿Necesitas algo más? Solo pregúntame naturalmente ✨
 """
@@ -176,6 +226,13 @@ async def handle_message(update: Update, context: ContextTypes.DEFAULT_TYPE):
                 return
             except:
                 pass
+        
+        # 🤖 DETECTAR SI ES PREGUNTA DE APPOINTMENT SETTING
+        if appointment_agent.is_appointment_related(user_message):
+            question_type = appointment_agent.analyze_message(user_message)
+            appointment_response = appointment_agent.generate_response(user_message, question_type)
+            await update.message.reply_text(appointment_response)
+            return
         
         # Crear respuesta simple con IA directa
         from openai import OpenAI
@@ -267,12 +324,37 @@ Si el usuario te pide que aprendas algo nuevo sobre el negocio, di que has actua
         bot_response = response.choices[0].message.content
         
         # 🚀 DETECTAR SI USUARIO QUIERE PUBLICAR EN FACEBOOK
-        publish_keywords = ['publica en facebook', 'subir a facebook', 'postea en facebook', 'facebook post', 'envía a facebook']
+        publish_keywords = ['publica en facebook', 'subir a facebook', 'postea en facebook', 'facebook post', 'envía a facebook', 'sube contenido a facebook', 'crea un foto y promueva']
         wants_to_publish = any(keyword in message_lower for keyword in publish_keywords)
         
+        # Detectar si quiere contenido con imagen
+        image_keywords = ['foto', 'imagen', 'visual', 'gráfico', 'crea un foto']
+        wants_image = any(keyword in message_lower for keyword in image_keywords)
+        
         # Si es contenido para redes sociales, ofrecer publicar automáticamente
-        content_keywords = ['post', 'publicación', 'contenido', 'facebook', 'redes sociales']
+        content_keywords = ['post', 'publicación', 'contenido', 'facebook', 'redes sociales', 'campaña', 'promociona']
         is_content = any(keyword in message_lower for keyword in content_keywords)
+        
+        # GENERAR IMAGEN SI SE SOLICITA
+        generated_image = None
+        if wants_image or wants_to_publish:
+            await update.message.reply_text("🎨 Generando imagen para tu contenido...")
+            
+            # Determinar tema de la imagen
+            image_theme = "general"
+            if "retiro" in message_lower or "enero" in message_lower:
+                image_theme = "retreat_announcement"
+            elif "medicina" in message_lower or "ayahuasca" in message_lower:
+                image_theme = "medicine"
+            elif "transformación" in message_lower or "sanación" in message_lower:
+                image_theme = "transformation"
+                
+            image_result = image_generator.generate_retreat_image(content_theme=image_theme)
+            if image_result["success"]:
+                generated_image = image_result["local_path"]
+                await update.message.reply_text("✅ Imagen generada exitosamente!")
+            else:
+                await update.message.reply_text(f"⚠️ No pude generar imagen: {image_result['error']}")
         
         # Enviar respuesta
         # Dividir respuestas largas (límite de Telegram: 4096 caracteres)
@@ -284,19 +366,27 @@ Si el usuario te pide que aprendas algo nuevo sobre el negocio, di que has actua
         else:
             await update.message.reply_text(bot_response)
             
-        # 📱 OFRECER PUBLICAR EN FACEBOOK SI ES CONTENIDO
-        if (is_content or wants_to_publish) and FACEBOOK_PAGE_ACCESS_TOKEN:
-            if wants_to_publish:
-                # Usuario pidió explícitamente publicar
-                facebook_result = post_to_facebook(bot_response)
-                if facebook_result["success"]:
-                    await update.message.reply_text(f"🎉 {facebook_result['message']}\n📱 Post ID: {facebook_result['post_id']}")
-                else:
-                    await update.message.reply_text(f"❌ Error al publicar en Facebook: {facebook_result['error']}")
+        # 📱 PUBLICAR AUTOMÁTICAMENTE EN FACEBOOK SI SE SOLICITA
+        if wants_to_publish and FACEBOOK_PAGE_ACCESS_TOKEN:
+            await update.message.reply_text("📱 Publicando en Facebook...")
+            
+            facebook_result = post_to_facebook(bot_response, generated_image)
+            if facebook_result["success"]:
+                success_msg = f"🎉 {facebook_result['message']}"
+                if facebook_result.get('has_image'):
+                    success_msg += " (con imagen)"
+                success_msg += f"\n📱 Post ID: {facebook_result['post_id']}"
+                await update.message.reply_text(success_msg)
             else:
-                # Ofrecer publicar
+                await update.message.reply_text(f"❌ Error al publicar en Facebook: {facebook_result['error']}")
+                
+        elif (is_content and not wants_to_publish) and FACEBOOK_PAGE_ACCESS_TOKEN:
+            # Ofrecer publicar
+            if generated_image:
+                publish_text = f"🚀 ¿Quieres publicar esto en Facebook con la imagen generada?\n\nResponde 'sí' para publicar automáticamente."
+            else:
                 publish_text = f"🚀 ¿Quieres publicar esto en Facebook?\n\nResponde 'sí' para publicar automáticamente."
-                await update.message.reply_text(publish_text)
+            await update.message.reply_text(publish_text)
         
         elif wants_to_publish and not FACEBOOK_PAGE_ACCESS_TOKEN:
             await update.message.reply_text("❌ Facebook no está configurado. Contacta al administrador para activar esta función.")
@@ -643,6 +733,246 @@ async def facebook_post(update: Update, context: ContextTypes.DEFAULT_TYPE):
         )
 
 
+async def campaign(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /campaign - Crear campaña completa de marketing"""
+    await update.message.chat.send_action("typing")
+    await update.message.reply_text("🚀 Generando campaña completa de marketing para el retiro del 11 de enero...")
+    
+    try:
+        # Generar campaña completa
+        full_campaign = campaign_manager.generate_complete_campaign()
+        
+        # Enviar cada sección por separado
+        sections = [
+            ("📊 ESTUDIO DE MERCADO", full_campaign["market_research"]),
+            ("📅 CALENDARIO DE CONTENIDO", full_campaign["content_calendar"]),
+            ("🎯 ESTRATEGIA DE AUDIENCIA", full_campaign["audience_strategy"]),
+            ("🎬 GUIÓN DE VIDEO MENSUAL", full_campaign["video_script"])
+        ]
+        
+        for title, content in sections:
+            # Dividir contenido largo
+            if len(content) > 4000:
+                chunks = [content[i:i+3800] for i in range(0, len(content), 3800)]
+                for i, chunk in enumerate(chunks):
+                    section_title = f"{title} (Parte {i+1}/{len(chunks)})" if len(chunks) > 1 else title
+                    await update.message.reply_text(f"**{section_title}**\n\n{chunk}", parse_mode='Markdown')
+            else:
+                await update.message.reply_text(f"**{title}**\n\n{content}", parse_mode='Markdown')
+        
+        await update.message.reply_text(
+            "✅ **Campaña completa generada!**\n\n"
+            "🎯 Usa `/audience` para estrategias específicas de captación\n"
+            "📅 Usa `/content` para calendario detallado\n"
+            "🎬 Usa `/video` para guiones de video"
+        )
+        
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error generando campaña: {str(e)}")
+
+
+async def audience(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /audience - Estrategia de captación de audiencia"""
+    await update.message.chat.send_action("typing")
+    await update.message.reply_text("🎯 Generando estrategia para conseguir audiencia...")
+    
+    try:
+        strategy = campaign_manager.create_audience_strategy()
+        
+        # Dividir si es muy largo
+        if len(strategy) > 4000:
+            chunks = [strategy[i:i+3800] for i in range(0, len(strategy), 3800)]
+            for i, chunk in enumerate(chunks):
+                title = f"🎯 ESTRATEGIA DE AUDIENCIA (Parte {i+1}/{len(chunks)})"
+                await update.message.reply_text(f"**{title}**\n\n{chunk}", parse_mode='Markdown')
+        else:
+            await update.message.reply_text(f"**🎯 ESTRATEGIA DE AUDIENCIA**\n\n{strategy}", parse_mode='Markdown')
+            
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
+async def content_calendar(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /content - Calendario de contenido detallado"""
+    await update.message.chat.send_action("typing")
+    
+    # Permitir especificar días
+    days = 30
+    if context.args:
+        try:
+            days = int(context.args[0])
+            days = min(days, 60)  # Máximo 60 días
+        except:
+            days = 30
+    
+    await update.message.reply_text(f"📅 Generando calendario de contenido para {days} días...")
+    
+    try:
+        calendar = campaign_manager.create_content_calendar(days)
+        
+        # Dividir si es muy largo
+        if len(calendar) > 4000:
+            chunks = [calendar[i:i+3800] for i in range(0, len(calendar), 3800)]
+            for i, chunk in enumerate(chunks):
+                title = f"📅 CALENDARIO DE CONTENIDO (Parte {i+1}/{len(chunks)})"
+                await update.message.reply_text(f"**{title}**\n\n{chunk}", parse_mode='Markdown')
+        else:
+            await update.message.reply_text(f"**📅 CALENDARIO DE CONTENIDO**\n\n{calendar}", parse_mode='Markdown')
+            
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
+async def video_script(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /video - Guión para video mensual"""
+    await update.message.chat.send_action("typing")
+    await update.message.reply_text("🎬 Generando guión de video de alta calidad...")
+    
+    try:
+        script = campaign_manager.create_monthly_video_script()
+        
+        # Dividir si es muy largo
+        if len(script) > 4000:
+            chunks = [script[i:i+3800] for i in range(0, len(script), 3800)]
+            for i, chunk in enumerate(chunks):
+                title = f"🎬 GUIÓN DE VIDEO (Parte {i+1}/{len(chunks)})"
+                await update.message.reply_text(f"**{title}**\n\n{chunk}", parse_mode='Markdown')
+        else:
+            await update.message.reply_text(f"**🎬 GUIÓN DE VIDEO**\n\n{script}", parse_mode='Markdown')
+            
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
+async def generate_image(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /image - Generar imagen para contenido"""
+    await update.message.chat.send_action("typing")
+    
+    # Determinar tema
+    theme = "general"
+    if context.args:
+        theme_input = ' '.join(context.args).lower()
+        if "retiro" in theme_input or "retreat" in theme_input:
+            theme = "retreat_announcement"
+        elif "medicina" in theme_input or "ayahuasca" in theme_input:
+            theme = "medicine"
+        elif "transformación" in theme_input or "transformation" in theme_input:
+            theme = "transformation"
+        elif "lugar" in theme_input or "location" in theme_input:
+            theme = "location"
+    
+    await update.message.reply_text(f"🎨 Generando imagen tema: {theme}...")
+    
+    try:
+        result = image_generator.generate_retreat_image(content_theme=theme)
+        
+        if result["success"]:
+            # Enviar imagen
+            with open(result["local_path"], 'rb') as photo:
+                await update.message.reply_photo(
+                    photo=photo,
+                    caption=f"✅ Imagen generada exitosamente!\n\n🎨 Tema: {theme}\n📁 Archivo: {result['filename']}\n\n💡 Usa `/facebook [contenido]` para publicar con esta imagen"
+                )
+        else:
+            await update.message.reply_text(f"❌ Error generando imagen: {result['error']}")
+            
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
+async def daily_content_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /daily - Generar contenido diario automático"""
+    await update.message.chat.send_action("typing")
+    
+    # Permitir especificar día
+    day_of_week = None
+    if context.args:
+        day_input = context.args[0].capitalize()
+        days = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"]
+        if day_input in days:
+            day_of_week = day_input
+    
+    target_day = day_of_week or datetime.now().strftime("%A")
+    await update.message.reply_text(f"🎨 Generando contenido diario para {target_day}...")
+    
+    try:
+        # Generar contenido + imagen
+        result = daily_content.generate_content_with_image(day_of_week)
+        
+        if result["success"]:
+            # Enviar contenido generado
+            content_message = f"**📅 CONTENIDO PARA {result['day'].upper()}**\n\n"
+            content_message += f"🎯 Tema: {result['theme']}\n"
+            content_message += f"⏰ Hora sugerida: {result['posting_time']}\n\n"
+            content_message += "**📝 CONTENIDO:**\n"
+            content_message += result['content']
+            
+            await update.message.reply_text(content_message, parse_mode='Markdown')
+            
+            # Enviar imagen si se generó exitosamente
+            if result["image"]["success"]:
+                with open(result["image"]["local_path"], 'rb') as photo:
+                    await update.message.reply_photo(
+                        photo=photo,
+                        caption="🎨 Imagen generada para acompañar el contenido"
+                    )
+                    
+                # Preguntar si quiere publicar
+                await update.message.reply_text(
+                    "🚀 ¿Quieres publicar este contenido en Facebook ahora?\n\n"
+                    "Responde 'sí' para publicar automáticamente."
+                )
+            else:
+                await update.message.reply_text(
+                    f"⚠️ Contenido generado, pero error en imagen: {result['image']['error']}\n\n"
+                    "🚀 ¿Quieres publicar solo el texto en Facebook?"
+                )
+        else:
+            await update.message.reply_text(f"❌ Error generando contenido: {result['error']}")
+            
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
+async def weekly_calendar_cmd(update: Update, context: ContextTypes.DEFAULT_TYPE):
+    """Comando /weekly - Generar calendario semanal completo"""
+    await update.message.chat.send_action("typing")
+    await update.message.reply_text("📅 Generando calendario semanal completo...")
+    
+    try:
+        weekly_content = daily_content.generate_weekly_calendar()
+        
+        if weekly_content:
+            calendar_message = "**📅 CALENDARIO SEMANAL SACRED REBIRTH**\n\n"
+            
+            for day, content_data in weekly_content.items():
+                calendar_message += f"**{day.upper()}** ({content_data['posting_time']})\n"
+                calendar_message += f"🎯 {content_data['theme']}\n"
+                calendar_message += f"📝 {content_data['content'][:100]}...\n\n"
+                calendar_message += "━━━━━━━━━━━━━━━━━━━━\n\n"
+            
+            # Dividir si es muy largo
+            if len(calendar_message) > 4000:
+                chunks = [calendar_message[i:i+3800] for i in range(0, len(calendar_message), 3800)]
+                for i, chunk in enumerate(chunks):
+                    title = f"📅 CALENDARIO SEMANAL (Parte {i+1}/{len(chunks)})"
+                    await update.message.reply_text(f"**{title}**\n\n{chunk}", parse_mode='Markdown')
+            else:
+                await update.message.reply_text(calendar_message, parse_mode='Markdown')
+                
+            await update.message.reply_text(
+                "✅ Calendario generado!\n\n"
+                "🎯 Usa `/daily [día]` para contenido específico\n"
+                "🚀 Usa `/facebook [contenido]` para publicar\n"
+                "🎨 Usa `/image [tema]` para generar imágenes"
+            )
+        else:
+            await update.message.reply_text("❌ No se pudo generar el calendario semanal")
+            
+    except Exception as e:
+        await update.message.reply_text(f"❌ Error: {str(e)}")
+
+
 def main():
     """Inicia el bot de Telegram"""
     
@@ -669,6 +999,13 @@ def main():
     application.add_handler(CommandHandler("models", models))
     application.add_handler(CommandHandler("teach", teach))
     application.add_handler(CommandHandler("facebook", facebook_post))
+    application.add_handler(CommandHandler("campaign", campaign))
+    application.add_handler(CommandHandler("audience", audience))
+    application.add_handler(CommandHandler("content", content_calendar))
+    application.add_handler(CommandHandler("video", video_script))
+    application.add_handler(CommandHandler("image", generate_image))
+    application.add_handler(CommandHandler("daily", daily_content_cmd))
+    application.add_handler(CommandHandler("weekly", weekly_calendar_cmd))
     
     # Handler para todos los mensajes de texto
     application.add_handler(MessageHandler(filters.TEXT & ~filters.COMMAND, handle_message))
