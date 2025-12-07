@@ -61,8 +61,33 @@ Ambiente seguro y sagrado ✨
 #SacredRebirth #Ayahuasca #ValleDeBravo
 
 📱 ¡Listo para publicar!"""
+        elif cmd in ['urgent', 'urgente']:
+            return """🚨 URGENTE HOY
+
+⚡ PRIORIDADES
+1. Discovery call 2:00 PM
+2. Post Instagram 6:00 PM  
+3. Follow-up 3 leads
+4. Review payment plans
+
+Revenue objetivo: $28,000 USD"""
+        elif cmd in ['pipeline', 'ventas']:
+            return """💰 PIPELINE VENTAS
+
+🎯 OBJETIVO: $28,000 USD
+8 espacios x $3,500 = SOLD OUT
+
+📊 STATUS
+🔥 Leads Calientes: 3
+🌡️ Leads Tibios: 8  
+❄️ Leads Fríos: 150+
+
+🚀 ACCIONES
+1. Close 3 leads calientes
+2. Book 5+ calls
+3. Expand ads targeting"""
         else:
-            return f"🤖 Maya: '{text}'\n\nComandos: report, content, urgent"
+            return f"🤖 Maya: Comando '{text}' recibido\n\nComandos disponibles:\n• report - Reporte diario\n• content - Post Instagram\n• urgent - Tareas urgentes\n• pipeline - Pipeline ventas"
 
 maya = Maya()
 app = Flask(__name__)
