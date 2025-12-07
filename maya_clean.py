@@ -241,7 +241,31 @@ class MayaEnterprise:
 {language_instruction}
 
 BUSINESS CONTEXT (when relevant):
-You assist with Sacred Rebirth - an ayahuasca retreat in Valle de Bravo, Mexico (August 11, 2025). Only 8 exclusive spaces available. Never mention the price ($3,500) - only offer discovery calls: https://calendly.com/sacredrebirth/discovery-call
+You are the AI assistant for Sacred Rebirth - premium ayahuasca retreats in Valle de Bravo, Mexico.
+
+SACRED REBIRTH DETAILS:
+- Website: https://sacred-rebirth.com/
+- Next Retreat: January 11, 2025  
+- Schedule: Every 3 months (quarterly retreats)
+- Exclusivity: ONLY 8 people per retreat (ultra-exclusive)
+- Location: Valle de Bravo, Mexico (sacred mountain location)
+- Target: High-income individuals seeking spiritual transformation
+- Marketing Cycles: 3-month campaigns for each retreat
+- Booking: https://calendly.com/sacredrebirth/discovery-call (NEVER mention price, only discovery calls)
+
+RETREAT CALENDAR 2025:
+- Q1: January 11, 2025 (NEXT - current campaign)
+- Q2: April 11, 2025 (3-month campaign starts February)
+- Q3: July 11, 2025 (3-month campaign starts May)  
+- Q4: October 11, 2025 (3-month campaign starts August)
+
+MARKETING STRATEGY:
+- Ultra-exclusive positioning (only 8 spaces)
+- 3-month runway for each retreat  
+- Focus on transformation, not transactions
+- High-income spiritual seekers
+- Valle de Bravo mystical energy
+- Sacred medicine ancestral wisdom
 
 YOUR INTELLIGENCE LEVEL:
 - You have the same intelligence as ChatGPT
@@ -409,11 +433,12 @@ For social media marketing of ayahuasca/plant medicine retreat."""
     # ===== MARKETING PIPELINE =====
     def analyze_marketing_pipeline(self):
         """Analiza el pipeline de marketing completo"""
-        days_remaining = (datetime(2025, 8, 11) - datetime.now()).days
+        days_remaining = (datetime(2025, 1, 11) - datetime.now()).days
         pipeline_data = f"""📊 **ANÁLISIS PIPELINE MARKETING**
 
 🎯 **SACRED REBIRTH STATUS:**
-📅 Retiro: Agosto 11, 2025 ({days_remaining} días restantes)
+📅 Retiro: Enero 11, 2025 ({days_remaining} días restantes)
+🔄 Siguiente: Abril 11, 2025 (cada 3 meses)
 🏔️ Valle de Bravo, México - Ubicación exclusiva
 👥 8 espacios únicos - $3,500 c/u
 💰 Revenue objetivo: $28,000 USD
@@ -455,7 +480,7 @@ For social media marketing of ayahuasca/plant medicine retreat."""
             
             'urgency': """Crea contenido de urgencia:
             - Solo 8 espacios disponibles
-            - Agosto 11, 2025 se acerca
+            - Enero 11, 2025 se acerca (próximo retiro)
             - Valle de Bravo lugar único
             - Última oportunidad 2025
             - CTA inmediata para acción"""
@@ -465,11 +490,12 @@ For social media marketing of ayahuasca/plant medicine retreat."""
         return self.generate_ai_content(prompt)
     
     def get_report(self):
-        days = (datetime(2025, 8, 11) - datetime.now()).days
+        days = (datetime(2025, 1, 11) - datetime.now()).days
         return f"""📊 SACRED REBIRTH REPORT
 📅 {datetime.now().strftime('%d %B')}
 
-🎯 RETIRO: Agosto 11, 2025 ({days} días)
+🎯 PRÓXIMO RETIRO: Enero 11, 2025 ({days} días)
+🔄 CALENDARIO: Cada 3 meses (Ene-Abr-Jul-Oct)
 📍 Valle de Bravo • 8 espacios • $3,500
 💰 Revenue objetivo: $28,000
 
@@ -567,7 +593,8 @@ Estilo: Auténtico, espiritual pero accesible, premium"""
             prompt = f"""Genera un reporte empresarial detallado para Sacred Rebirth basado en estos datos:
 
 NEGOCIO: Sacred Rebirth - Retiro medicina ancestral
-FECHA OBJETIVO: Agosto 11, 2025 (retiro)
+FECHA OBJETIVO: Enero 11, 2025 (próximo retiro)
+MODELO: Retiros trimestrales (cada 3 meses)
 UBICACIÓN: Valle de Bravo, México
 CAPACIDAD: 8 espacios exclusivos
 PRECIO: $3,500 USD por persona
@@ -594,7 +621,7 @@ Estilo: Profesional, datos específicos, actionable"""
             prompt = """Crea una estrategia de marketing completa para Sacred Rebirth retiro ayahuasca.
 
 OBJETIVO: Llenar 8 espacios a $3,500 USD cada uno = $28,000 revenue
-TIEMPO: Hasta Agosto 11, 2025
+TIEMPO: Hasta Enero 11, 2025 (campaña 3 meses)
 AUDIENCIA: Profesionales alto ingreso, 35-55 años, transformación espiritual
 
 Incluir:
@@ -638,7 +665,8 @@ Si resonas con esto, Sacred Rebirth puede ser tu respuesta.
 🏔️ Temazcal de purificación en la naturaleza
 🍫 Cacao ceremonial para abrir el corazón
 
-📅 Próximo retiro: Agosto 11, 2025
+📅 Próximo retiro: Enero 11, 2025
+🔄 Cada 3 meses: Ene-Abr-Jul-Oct
 👥 Solo 8 espacios (exclusividad garantizada)
 💎 Inversión: $3,500 USD
 
@@ -683,7 +711,8 @@ Responde como Maya, experta en marketing para retiros espirituales y medicina an
 
 CONTEXTO:
 - Sacred Rebirth: Retiro ayahuasca en Valle de Bravo
-- Fecha: Agosto 11, 2025
+- Fecha: Enero 11, 2025 (próximo)
+- Modelo: Retiros cada 3 meses
 - 8 espacios a $3,500 USD
 - Audiencia: Alto ingreso, transformación espiritual
 
